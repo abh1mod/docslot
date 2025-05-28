@@ -38,14 +38,14 @@ router.post("/doc_register", async(req,res)=>{
 });
 
 //route for doctor to check his slot in a day
-router.get("/my_day/:id", async(req,res)=>{
-    const doctor_id = req.params.id;
-    // const { date } = req.query;
-    try{ // dummy query to check whether its working
-        const doc_detail = await sql `
-        SELECT * FROM doctor WHERE doc_id = ${doctor_id}
+router.get("/my_day", async(req,res)=>{
+    const{ doc_id, date } = req.query;
+    try{ 
+        const day_schedule = await sql `
+        SELECT * FROM appointment WHERE doc_id = ${doc_id} AND date = ${date}
         `
-        res.status(200).json({success:true, data:doc_detail[0]});
+        console.log("Schedule fetched Successfully",day_schedule);
+        res.status(200).json({success:true, data:day_schedule});
     } catch(error){
         console.log("Error in getting Details ",error);
         res.status(500).json({success:false, message:"Internal Server Error"});
@@ -110,4 +110,5 @@ router.post("/book_appointment", async(req,res)=>{
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
+
 export default router;
