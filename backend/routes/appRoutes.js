@@ -18,15 +18,15 @@ router.get("/fetch_all", async(req,res)=>{
 
 // route for doctor to register
 router.post("/doc_register", async(req,res)=>{
-    const {doc_name, specialization, phone, email, room_no} = req.body;
+    const {doc_name, specialization, email} = req.body;
 
-    if(!doc_name || !specialization || !phone || !email || !room_no){
+    if(!doc_name || !specialization || !email ){
         return res.status(400).json({success:false, message:"Please Enter All Fields"})
     }
     try{
         const newDoctor = await sql`
-        INSERT INTO doctor(name, specialization, phone,email, room_no) 
-        VALUES(${doc_name},${specialization},${phone},${email},${room_no})
+        INSERT INTO doctor(name, specialization, email) 
+        VALUES(${doc_name},${specialization},${email})
         RETURNING *
         `;
         console.log("You Are Registered Successfully", newDoctor);
@@ -42,28 +42,72 @@ router.get("/my_day/:id", async(req,res)=>{
     const doctor_id = req.params.id;
     // const { date } = req.query;
     try{ // dummy query to check whether its working
-        const doc = await sql `
-        SELECT * FROM doctor WHERE doctor_id = ${doctor_id}
+        const doc_detail = await sql `
+        SELECT * FROM doctor WHERE doc_id = ${doctor_id}
         `
-        res.status(200).json({success:true, data:doc[0]});
+        res.status(200).json({success:true, data:doc_detail[0]});
     } catch(error){
         console.log("Error in getting Details ",error);
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
 
+//route to delete doctor account
 router.delete("/remove_acc/:id", async(req,res)=>{
     const doctor_id = req.params.id;
     try{ 
-        const doc = await sql `
-        DELETE FROM doctor WHERE doctor_id = ${doctor_id}
-        `;
-        console.log("Your Account has been Deleted ", doc)
-        res.status(200).json({success:true, data:doc[0]});
+        const deleted_doc = await sql `
+        DELETE FROM doctor WHERE doc_id = ${doctor_id}
+        RETURNING *`;
+        console.log("Your Account has been Deleted ", deleted_doc)
+        res.status(200).json({success:true, data:deleted_doc[0]});
     } catch(error){
         console.log("Error Deleting Account",error);
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
 
+//route to register patient
+router.post("/pt_register", async(req,res)=>{
+    const {pt_name, gender,dob,phone,email} = req.body;
+
+    if(!pt_name || !gender || !dob || !phone || !email){
+        return res.status(400).json({success:false, message:"Please Enter All Fields"})
+    }
+    try{
+        const newPatient = await sql`
+            INSERT INTO patient(name,gender,dob,phone,email) 
+            VALUES(${pt_name},${gender},${dob},${phone},${email})
+            RETURNING *
+        `;
+        console.log("Patient Registered Successfully",newPatient);
+        res.status(201).json({success:true, data:newPatient[0]});
+    }
+    catch(error){
+        console.log("Error in Registration", error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+});
+
+//route for appointment booking
+router.post("/book_appointment", async(req,res)=>{
+    const{doc_id,pt_id} = req.query;
+    const{date,start_time, end_time} = req.body;
+        if(!doc_id || !pt_id){
+            return res.status(401).json({success:false, message:"Please provide all query parameters"});
+        }
+    try{
+        const appointment = await sql`
+        INSERT INTO appointment(doc_id, pt_id, date, start_time, end_time) 
+        VALUES(${doc_id},${pt_id},${date},${start_time},${end_time})
+        RETURNING *
+        `;
+        console.log("Appoitment Booked Successfully",appointment);
+        res.status(201).json({success:true,data:appointment[0]});
+
+    } catch(error){
+        console.log("Error in booking appoitment", error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+});
 export default router;
