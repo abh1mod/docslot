@@ -42,7 +42,9 @@ router.get("/my_day", async(req,res)=>{
     const{ doc_id, date } = req.query;
     try{ 
         const day_schedule = await sql `
-        SELECT * FROM appointment WHERE doc_id = ${doc_id} AND date = ${date}
+        SELECT start_time, end_time, pt_id, name, (CURRENT_DATE-dob)/365 AS age,gender 
+        FROM appointment NATURAL JOIN patient
+        WHERE doc_id = ${doc_id} AND date = ${date} ORDER BY start_time
         `
         console.log("Schedule fetched Successfully",day_schedule);
         res.status(200).json({success:true, data:day_schedule});
