@@ -13,6 +13,14 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+
+app.use(cors({
+  origin: "http://localhost:5173", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
+
 app.use(helmet());
 app.use(morgan("dev"));//log requests
 app.use(express.json()); // use to parse incoming data 
