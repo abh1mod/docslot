@@ -37,6 +37,27 @@ router.post("/doc_register", async(req,res)=>{
     }
 });
 
+//route for doctor to login
+router.post('/doc_login', async (req, res) => {
+    const {doc_id, email} = req.body;
+    if(!doc_id || !email ){
+        return res.status(400).json({success:false, message:"Please Enter All Fields"})
+    }
+    try{
+        const doc = await sql`
+        SELECT * FROM doctor WHERE doc_id = ${doc_id} AND email = ${email}
+        `;
+        if(doc.length===0){
+            return res.status(401).json({success:false, message:"Check Your Credentials"});
+        }
+        console.log("Logged In successfully", doc);
+        res.status(201).json({success: true, data: doc[0]});
+    }catch(error){
+        console.log("Logging Error", error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+});
+
 //route for doctor to check his slot in a day
 router.get("/my_day", async(req,res)=>{
     const{ doc_id, date } = req.query;
@@ -87,6 +108,27 @@ router.post("/pt_register", async(req,res)=>{
     }
     catch(error){
         console.log("Error in Registration", error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+});
+
+//route for patient to login
+router.post('/pt_login', async (req, res) => {
+    const {pt_id, email} = req.body;
+    if(!pt_id || !email ){
+        return res.status(400).json({success:false, message:"Please Enter All Fields"})
+    }
+    try{
+        const patient = await sql`
+        SELECT * FROM patient WHERE pt_id = ${pt_id} AND email = ${email}
+        `;
+        if(patient.length===0){
+            return res.status(401).json({success:false, message:"Check Your Credentials"});
+        }
+        console.log("Logged In successfully", patient);
+        res.status(201).json({success: true, data: patient});
+    }catch(error){
+        console.log("Logging Error", error);
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
