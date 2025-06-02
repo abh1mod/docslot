@@ -1,0 +1,12 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1; /* Pushes Footer to the bottom */
+  padding: 20px; /* Add padding to avoid overlap */
+  margin-top: 60px; /* Optional: match header height */
+  margin-bottom: 60px; /* Optional: match footer height */
+}

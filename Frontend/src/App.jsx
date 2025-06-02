@@ -1,27 +1,43 @@
 import './App.css'
-import RegistrationDoc from './Pages/LoginPages/RegistrationDoc';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginDoc from './Pages/LoginPages/LoginDoc';
-import DoctorProfile from './Pages/DoctorProfile';
-import HomePage from './Pages/HomePage';
-import RegistrationPt from './Pages/LoginPages/RegistrationPt'
-import LoginPt from './Pages/LoginPages/LoginPt';
+// import Registration from './Components/Registration'
+import Layout from './Layout/Layout'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from './pages/Home';
+import About from './pages/About';
+import Doctor from './pages/Doctor';
+import Error from './pages/Eroor';
+
+
+ const router=createBrowserRouter([
+      {
+        path:"/",
+        element:<Layout/>,
+        errorElement:<Error/>,
+        children:[
+            {
+        path :"/",
+        element :<Home/>
+      },
+      {
+        path:"/about",
+        element:<About/>
+      },
+      {
+        path:"/doctor",
+        element:<Doctor/>
+      }
+        ]
+      },
+      
+     ])
+
+
 function App() {
   return (
-    <div>
-  <Router>
-        <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/registration_doc" element={<RegistrationDoc/>}/>   
-            <Route path="/login_doc" element={<LoginDoc/>} />
-            <Route path="/doctor/:doc_id" element={<DoctorProfile />} />
-            <Route path="/registration_pt" element={<RegistrationPt/>}/>
-            <Route path="/login_pt" element={<LoginPt/>}/>
-        </Routes>
-    </Router>
-    </div>
-    
-    
+    <>
+     {/* <Layout/> */}
+   <RouterProvider router={router}/>
+    </>
   )
 }
 
