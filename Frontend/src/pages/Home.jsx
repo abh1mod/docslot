@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import React from 'react';
+import '../index.css'; // Ensure you have Tailwind CSS set up in your project
 const Home=()=>{
     return <>
         <div className="flex min-h-screen">
@@ -16,6 +19,7 @@ const Home=()=>{
     <div className="bg-white rounded-xl shadow-md w-full max-w-md p-8">
       <h2 className="text-2xl font-semibold text-center mb-6">Book a Free Consultation</h2>
       <div className="h-0.5 w-12 bg-gray-300 mx-auto mb-6"></div>
+
 
       <form className="space-y-4">
         <div className="flex space-x-4">

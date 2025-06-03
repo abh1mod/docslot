@@ -1,11 +1,17 @@
 import './App.css'
-// import Registration from './Components/Registration'
 import Layout from './Layout/Layout'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from '/src/Pages/Home';
-import About from '/src/Pages/Home';
-import Doctor from '/src/Pages/Home';
-import Error from '/src/Pages/Home';
+import Home from './pages/Home';
+import About from './pages/About';
+import Doctor from './pages/Doctor';
+import Error from './pages/Eroor';
+import RegistrationDoc from './pages/LoginPages/RegistrationDoc';
+import LoginDoc from './pages/LoginPages/LoginDoc';
+import RegistrationPt from './pages/LoginPages/RegistrationPt';
+import LoginPt from './pages/LoginPages/LoginPt';
+import DoctorProfile from './pages/DoctorProfile';
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
  const router=createBrowserRouter([
@@ -25,7 +31,28 @@ import Error from '/src/Pages/Home';
       {
         path:"/doctor",
         element:<Doctor/>
+      },
+      {
+        path:"/registration_doc",
+        element:<RegistrationDoc/>
+      },
+      {
+        path:"/login_doc",
+        element:<LoginDoc/>
+      },
+      {
+        path:"/doctor/:doc_id",
+        element:<DoctorProfile/>
+      },
+      {
+        path:"/registration_pt",
+        element:<RegistrationPt/>
+      },
+      {
+        path:"/login_pt",
+        element:<LoginPt/>
       }
+    
         ]
       },
       
@@ -35,7 +62,7 @@ import Error from '/src/Pages/Home';
 function App() {
   return (
     <>
-     {/* <Layout/> */}
+      {/* <Layout/> */}
    <RouterProvider router={router}/>
     </>
   )
