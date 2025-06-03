@@ -16,7 +16,7 @@ router.get("/fetch_all", async(req,res)=>{
     }
 });
 
-// route for doctor to register
+//CREATE route for doctor to register 
 router.post("/doc_register", async(req,res)=>{
     const {doc_name, specialization, email} = req.body;
 
@@ -58,7 +58,42 @@ router.post('/doc_login', async (req, res) => {
     }
 });
 
-//route for doctor to check his slot in a day
+//READ route for doctor to check his profile READ
+router.get('/doc_profile/:doc_id', async(req,res)=>{
+    try{
+        const {doc_id} = req.params;
+        const doc = await sql`
+            SELECT * FROM doctor WHERE doc_id = ${doc_id}    
+        `;
+        console.log("Fetched Doctor Profile",doc);
+        res.status(200).json({success:true,data:doc[0]});
+    }
+    catch(error){
+        console.log("Error in fetching profile",error);
+        res.status(500).json({success:false, message:"Server Error"});
+    }
+})
+
+//UPDATE
+router.put('/doc_update/:doc_id',async(req,res)=>{
+    const{doc_id} = req.params;
+    const {name, specialization,phone,email,image,about_us} = req.body;
+    try{
+        const newProfile = await sql`
+        UPDATE doctor SET name = ${name}, specialization = ${specialization}, phone = ${phone}, 
+        email = ${email},image = ${image},about_us=${about_us}
+        WHERE doc_id = ${doc_id} RETURNING *
+        `;
+        console.log("Your Profile Has been Updated", newProfile);
+        res.status(201).json({success:true,data:newProfile});
+    }
+    catch(error){
+        console.log("Error in Updating Profile",error);
+        res.status(500).json({success:false,message:"Internal Server error"});
+    }
+})
+
+//READ route for doctor to check his slot in a day
 router.get("/my_day", async(req,res)=>{
     const{ doc_id, date } = req.query;
     try{ 
