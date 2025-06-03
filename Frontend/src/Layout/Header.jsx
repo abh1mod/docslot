@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 const Header=()=>{
     return <>
         <nav className="bg-white shadow-lg fixed w-full z-10">
@@ -11,11 +11,16 @@ const Header=()=>{
           DocSlot
         </div>
 
-      
+     
         <div className="hidden md:flex space-x-6">
+          
           <NavLink to='/' className="nav-link text-gray-700 hover:text-blue-600 font-medium">Home</NavLink>
           <NavLink to='/about' className="nav-link text-gray-700 hover:text-blue-600 font-medium">About</NavLink>
-          <NavLink to='/doctor' className="nav-link text-gray-700 hover:text-blue-600 font-medium">Doctor</NavLink>
+          <NavLink to='/doctor' className="nav-link text-gray-700 hover:text-blue-600 font-medium">Doctor</NavLink>  
+         
+         <h3>Login As :-</h3>
+          <Link to="/login_doc"><button>Doctor</button></Link> 
+          <Link to="/login_pt"><button>Patient</button></Link>
         </div>
 
     
