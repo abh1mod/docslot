@@ -98,7 +98,7 @@ router.get("/my_day/:doc_id", async(req,res)=>{
     const{ doc_id } = req.params;
     try{ 
         const day_schedule = await sql `
-        SELECT start_time, end_time, pt_id, name,date, (CURRENT_DATE-dob)/365 AS age,gender 
+        SELECT start_time, end_time, pt_id, name,date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date, (CURRENT_DATE-dob)/365 AS age,gender 
         FROM appointment NATURAL JOIN patient
         WHERE doc_id = ${doc_id}  ORDER BY date, start_time
         `;
