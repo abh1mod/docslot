@@ -94,14 +94,14 @@ router.put('/doc_update/:doc_id',async(req,res)=>{
 })
 
 //READ route for doctor to check his slot in a day
-router.get("/my_day", async(req,res)=>{
-    const{ doc_id, date } = req.query;
+router.get("/my_day/:doc_id", async(req,res)=>{
+    const{ doc_id } = req.params;
     try{ 
         const day_schedule = await sql `
-        SELECT start_time, end_time, pt_id, name, (CURRENT_DATE-dob)/365 AS age,gender 
+        SELECT start_time, end_time, pt_id, name,date, (CURRENT_DATE-dob)/365 AS age,gender 
         FROM appointment NATURAL JOIN patient
-        WHERE doc_id = ${doc_id} AND date = ${date} ORDER BY start_time
-        `
+        WHERE doc_id = ${doc_id}  ORDER BY date, start_time
+        `;
         console.log("Schedule fetched Successfully",day_schedule);
         res.status(200).json({success:true, data:day_schedule});
     } catch(error){

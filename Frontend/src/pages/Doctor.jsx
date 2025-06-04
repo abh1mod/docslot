@@ -29,6 +29,7 @@ const Doctor=()=>{
       fetchDoctors();
   
   }, []);
+  // console.log(doctors)
     // const[User,setUser]=useState([])
     // const data=[{"name":"himanshu","specialization":"brainlogist","phone":"988766554","email":"hsisodia988766@dyuvas","room_no":"12","id":10,"doc_id":"doc_10"},
     //     {"name":"pranjula","specialization":"brainlogsafast","phone":"988766564","email":"jdsgyjsdf","room_no":"12","id":11,"doc_id":"doc_11"}
