@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import DocCard from "./DocCard";
 import Loading from "./Loading";
-
+import { Link } from "react-router-dom";
 const Doctor=()=>{
 
-     const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [doctors, setDoctors] = useState([]);
+    const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     
@@ -72,20 +72,28 @@ const Doctor=()=>{
     // }
     // fetchdata();
   
-    return<>
+    return<div className="bg-white-100 min-h-screen p-4">
       <ul className="p-4 space-y-4">
-       {/* <DocCard events={data} /> */}
   {loading ? (
     <Loading/>
   ):(
     doctors.map((event, index) => (
-      <li key={index}>
-        <DocCard events={event} />
+        <li key={index}>
+        <Link to={`/booking/${event.doc_id}`} className="no-underline text-black" >
+        
+          <DocCard events={event} />
+    
+        
+        </Link>
       </li>
+  
+      
+      
     ))
   )}
+
 </ul>
-    </>
+    </div>
     
 }
 

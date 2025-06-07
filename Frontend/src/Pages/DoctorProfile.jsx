@@ -80,10 +80,10 @@ const count=upcomingAppointments.filter((item)=>{
 
 //simple html+tailwind
     return <div className="bg-gray-100 min-h-screen flex flex-col items-center ">
-  <div className="bg-white shadow-lg rounded-xl flex flex-col md:flex-row w-full max-w-4xl">
+  <div className="bg-white shadow-lg rounded-xl flex flex-col md:flex-row w-full max-w-4xl min-h-[520px] mt-5 ">
    
     <div className="p-6 md:w-1/3 flex flex-col items-center border-b md:border-b-0 md:border-r border-gray-200">
-      <img src={image} alt="Doctor profile" className="rounded-full w-24 h-24 object-cover mb-4" />
+      <img src={image} alt="Doctor profile" className="rounded-full w-24 h-24 object-cover mb-4 mt-6" />
       <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
       <p className="text-gray-600 mb-4">{specialization}</p>
       <div className="text-gray-600 space-y-2 text-sm">
@@ -94,8 +94,8 @@ const count=upcomingAppointments.filter((item)=>{
     </div>
 
  
-    <div className="flex-1 p-6">
-      <h1 className="text-2xl font-bold mb-4">Doctor Dashboard</h1>
+    <div className="flex-1 p-6" >
+      <h1 className="text-2xl font-bold mb-4 mt-4">Doctor Dashboard</h1>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="bg-blue-500 text-white rounded-lg flex flex-col items-center justify-center p-4">
           <p className="text-sm">Appointments Today</p>
@@ -136,7 +136,7 @@ const count=upcomingAppointments.filter((item)=>{
           <tr key={index}>
             <td className="px-2 py-1 border">{item.name}</td>
             <td className="px-2 py-1 border"> {item.date.substring(0, 10)}</td>
-            <td className="px-2 py-1 border">{item.start_time.slice(0,5)}-{item.end_time.slice(0,5)}</td>
+            <td className="px-2 py-1 border">{item.start_time.slice(0,5)}</td>
             {/* <td className="px-2 py-1 border">{item.end_time}</td> */}
           </tr>
         ))}
@@ -174,7 +174,7 @@ const count=upcomingAppointments.filter((item)=>{
           <tr key={index}>
             <td className="px-2 py-1 border">{item.name}</td>
             <td className="px-2 py-1 border"> {item.date.substring(0, 10)}</td>
-            <td className="px-2 py-1 border">{item.start_time.slice(0,5)}-{item.end_time.slice(0,5)}</td>
+            <td className="px-2 py-1 border">{item.start_time.slice(0,5)}</td>
             {/* <td className="px-2 py-1 border">{item.end_time}</td> */}
           </tr>
         ))}
