@@ -3,7 +3,7 @@ import Layout from './Layout/Layout'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from './pages/Home';
 import About from './pages/About';
-import Doctor from './pages/Doctor';
+import Doctor from './Pages/Doctor.jsx';
 import Error from './pages/Eroor';
 import RegistrationDoc from './pages/LoginPages/RegistrationDoc';
 import LoginDoc from './pages/LoginPages/LoginDoc';
@@ -12,6 +12,7 @@ import LoginPt from './pages/LoginPages/LoginPt';
 import DoctorProfile from './Pages/DoctorProfile';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import BookingPortal from './Pages/BookingPortal';
 
 
  const router=createBrowserRouter([
@@ -51,6 +52,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
       {
         path:"/login_pt",
         element:<LoginPt/>
+      },
+      {
+        path:"/booking/:doc_id",
+        element:<BookingPortal/>
       }
     
         ]

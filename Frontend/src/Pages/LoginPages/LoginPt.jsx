@@ -1,20 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/patient2.jpg'; // Adjust the path as needed
 
 
-function LoginPt() {
+function LoginPt({onLoginSuccess, onSwitchToRegister}) {
     const [pt_id, setPtId] = useState('');
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    useEffect(()=>{
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.body.style.overflowY="hidden";
+      return()=>{
+        document.body.style.overflowY="scroll";
+      }
+    },[]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const res = await axios.post('http://localhost:3000/api/pt_login', { pt_id, email });
+            if(res.data.success){
+              const patient = res.data;
+              onLoginSuccess(patient); //Callback Triggered
+            }
+            else{
+              console.log("Check Your Credentials");
+            }
 
         } catch (err) {
             setError("Check Your Credentials");
@@ -24,7 +39,7 @@ function LoginPt() {
 
     return (
 
-        <div className="signup-container">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="signup-box">
       <div className="signup-image">
           <img src={PtImg} alt="doctor patient image" />
@@ -57,13 +72,13 @@ function LoginPt() {
             <button type="submit">Login</button>
           </form>
           <div className="LoginLink">
-          <Link to="/registration_pt">Didn't have an Account?</Link>
+          <span onClick={onSwitchToRegister}>Didn't have an Account?</span>
           </div>
             
         </div>
         
       </div>
-    </div>
+     </div>
         
     );
 }

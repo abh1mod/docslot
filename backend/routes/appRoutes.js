@@ -138,7 +138,7 @@ router.post("/pt_register", async(req,res)=>{
             VALUES(${pt_name},${gender},${dob},${phone},${email})
             RETURNING *
         `;
-        console.log("Patient Registered Successfully",newPatient);
+        console.log("Patient Registered Successfully",newPatient[0]);
         res.status(201).json({success:true, data:newPatient[0]});
     }
     catch(error){
@@ -157,11 +157,12 @@ router.post('/pt_login', async (req, res) => {
         const patient = await sql`
         SELECT * FROM patient WHERE pt_id = ${pt_id} AND email = ${email}
         `;
-        if(patient.length===0){
+        if(patient.length === 0){
+            console.log("Check Your Credentials");
             return res.status(401).json({success:false, message:"Check Your Credentials"});
         }
-        console.log("Logged In successfully", patient);
-        res.status(201).json({success: true, data: patient});
+        console.log("Logged In successfully", patient[0]);
+        res.status(201).json({success: true, data: patient[0]});
     }catch(error){
         console.log("Logging Error", error);
         res.status(500).json({success:false, message:"Internal Server Error"});
@@ -169,16 +170,16 @@ router.post('/pt_login', async (req, res) => {
 });
 
 //route for appointment booking
-router.post("/book_appointment", async(req,res)=>{
-    const{doc_id,pt_id} = req.query;
-    const{date,start_time, end_time} = req.body;
+router.post("/book_appointment/:doc_id/:pt_id", async(req,res)=>{
+    const{doc_id,pt_id} = req.params;
+    const{date,start_time,remarks} = req.body;
         if(!doc_id || !pt_id){
             return res.status(401).json({success:false, message:"Please provide all query parameters"});
         }
     try{
         const appointment = await sql`
-        INSERT INTO appointment(doc_id, pt_id, date, start_time, end_time) 
-        VALUES(${doc_id},${pt_id},${date},${start_time},${end_time})
+        INSERT INTO appointment(doc_id, pt_id, date, start_time,remarks) 
+        VALUES(${doc_id},${pt_id},${date},${start_time},${remarks})
         RETURNING *
         `;
         console.log("Appoitment Booked Successfully",appointment);
@@ -186,6 +187,21 @@ router.post("/book_appointment", async(req,res)=>{
 
     } catch(error){
         console.log("Error in booking appoitment", error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+});
+
+router.get("/busy_slots/:date/:doc_id", async(req,res)=>{
+    const {date, doc_id} = req.params;
+    try{
+        const busy_slots = await sql`
+        SELECT start_time FROM appointment 
+        WHERE date = ${date} AND doc_id = ${doc_id}
+        `;
+        console.log("Busy Slots Fetched Successfully",busy_slots);
+        res.status(200).json({success:true, data:busy_slots});
+    } catch(error){
+        console.log("Error in getting Busy Slots", error);
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });

@@ -4,8 +4,8 @@ import Pt2Img from "../../assets/patient.jpg";
 import { Link } from "react-router-dom"; 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const RegistrationPt = () => {
+import { useEffect } from "react";
+const RegistrationPt = ({onRegistrationSuccess, onSwitchToLogin}) => {
     const [pt_name, setPtName] = useState('');
     const [gender, setGender] = useState('');
     const [dob, setDOB] = useState('');
@@ -14,21 +14,29 @@ const RegistrationPt = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+        useEffect(()=>{
+          document.body.style.overflowY="hidden";
+          return()=>{
+            document.body.style.overflowY="scroll";
+          }
+        },[]);
+
     const handleRegister = async(event)=>{
       event.preventDefault();
       try{
         // const data = ;
         const res = await axios.post("http://localhost:3000/api/pt_register", {pt_name, gender, dob, phone, email});
           console.log(res.data.success);
-          setError(res.data.message);  
-      }
+          onRegistrationSuccess(res.data); // Callback Triggered
+        }
         catch(error){
           console.log(error);
+          setError(res.data.message);  
         }
       }
       
   return (
-    <div className="signup-container">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="signup-box">
         <div className="signup-form">
           <h2>Sign up</h2>
@@ -99,7 +107,8 @@ const RegistrationPt = () => {
             <button type="submit">Register</button>
           </form>
           <div className="LoginLink">
-          <Link to="/login_pt">Already have an Account?</Link>
+          <span onClick={onSwitchToLogin}>Already have an Account?</span>
+          
           </div>
             
         </div>
