@@ -9,7 +9,7 @@ import RegistrationDoc from './pages/LoginPages/RegistrationDoc';
 import LoginDoc from './pages/LoginPages/LoginDoc';
 import RegistrationPt from './pages/LoginPages/RegistrationPt';
 import LoginPt from './pages/LoginPages/LoginPt';
-import DoctorProfile from './pages/DoctorProfile';
+import DoctorProfile from './Pages/DoctorProfile';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 

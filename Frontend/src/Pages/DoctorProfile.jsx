@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaArrowAltCircleDown } from "react-icons/fa"
 import { FaArrowCircleUp } from "react-icons/fa";
+import EditDoctor from "../Modal/EditDoctor";
 
 function DoctorProfile(){
 
@@ -18,6 +19,12 @@ function DoctorProfile(){
   //for past appointment and we also use above useState
   const[open,setopen]=useState(false);
 
+  const[edit,setEdit]=useState(false);
+
+
+  // const[updatedata,setUpdatedata]=useState({
+
+  // });
 //use to fetch data form api for respective doc appointment
     useEffect(()=>{
         const fetchProfiledata = async()=>{
@@ -78,11 +85,16 @@ const count=upcomingAppointments.filter((item)=>{
   return appointmentDate < today;
 });
 
+const handleclose=()=>{
+  setEdit(false);
+}
+
 //simple html+tailwind
     return <div className="bg-gray-100 min-h-screen flex flex-col items-center ">
   <div className="bg-white shadow-lg rounded-xl flex flex-col md:flex-row w-full max-w-4xl">
    
-    <div className="p-6 md:w-1/3 flex flex-col items-center border-b md:border-b-0 md:border-r border-gray-200">
+   <div className=" h-full flex flex-col justify-start w-[15rem]">    
+   <div className="p-6  flex flex-col items-center border-b md:border-b-0 md:border-r border-gray-200">
       <img src={image} alt="Doctor profile" className="rounded-full w-24 h-24 object-cover mb-4" />
       <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
       <p className="text-gray-600 mb-4">{specialization}</p>
@@ -92,7 +104,10 @@ const count=upcomingAppointments.filter((item)=>{
         <p><i className="fas fa-map-marker-alt mr-2"></i>Boston, MA</p>
       </div>
     </div>
-
+     <button onClick={()=>setEdit(true)} className="hover:bg-gray-300 transition-all ease-in-out w-[6rem] h-[2.5rem] ml-16 mb-2 rounded-xl bg-gray-200 font-semibold text-gray-700 p-1">Edit Profile</button>
+     </div>
+     
+     {edit && <EditDoctor data={doctor} set={setDoctor} close={handleclose}/>}
  
     <div className="flex-1 p-6">
       <h1 className="text-2xl font-bold mb-4">Doctor Dashboard</h1>
@@ -106,11 +121,11 @@ const count=upcomingAppointments.filter((item)=>{
         </div>
       </div>
       <div className="bg-gray-100 rounded-lg divide-y divide-gray-300">
-        <div className="p-4 flex justify-between items-center">
-          <span className="w-full">
+        <div className="p-4 flex justify-between items-center cursor-pointer"  onClick={()=>setOpen(isopen ? false : true)}>
+          <span className="w-full " >
             <div className="flex  justify-between transition-all duration-300 ease-in-out">
               <p>Upcoming Appointment</p>
-            <button  onClick={()=>setOpen(isopen ? false : true)}>{isopen ? <FaArrowCircleUp /> : <FaArrowAltCircleDown />}</button>
+            <button >{isopen ? <FaArrowCircleUp /> : <FaArrowAltCircleDown />}</button>
             </div>
       <div
       //main upcoming appointement accordian
@@ -149,15 +164,15 @@ const count=upcomingAppointments.filter((item)=>{
           </span>
           <i className="fas fa-chevron-right"></i>
         </div>
-        <div className="p-4 flex justify-between items-center">
+        <div className="p-4 flex justify-between items-center cursor-pointer" onClick={()=>setopen(open ? false : true)} >
            <span className="w-full">
             <div className="flex  justify-between transition-all duration-300 ease-in-out">
               <p>Past Appointment</p>
-            <button  onClick={()=>setopen(open ? false : true)}>{open ? <FaArrowCircleUp /> : <FaArrowAltCircleDown />}</button>
+            <button  >{open ? <FaArrowCircleUp /> : <FaArrowAltCircleDown />}</button>
             </div>
       <div
   className={`overflow-hidden transition-max-height duration-500 ease-in-out ${
-    open ? 'max-h-96' : 'max-h-0'
+    open ? 'max-h-96 ' : 'max-h-0'
   }`}>
   <div className="p-4 bg-gray-200">
     <table className="min-w-full text-left">

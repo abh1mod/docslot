@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-import { Link } from "react-router-dom";
+import './Header.css'
+
 const Header=()=>{
     return <>
         <nav className="bg-white shadow-lg fixed w-full z-10">
@@ -14,13 +15,13 @@ const Header=()=>{
      
         <div className="hidden md:flex space-x-6">
           
-          <NavLink to='/' className="nav-link text-gray-700 hover:text-blue-600 font-medium">Home</NavLink>
-          <NavLink to='/about' className="nav-link text-gray-700 hover:text-blue-600 font-medium">About</NavLink>
-          <NavLink to='/doctor' className="nav-link text-gray-700 hover:text-blue-600 font-medium">Doctor</NavLink>  
+          <NavLink to='/' className={({ isActive }) => (isActive ? 'active' : 'text-gray-800 font-semibold')}>Home</NavLink>
+          <NavLink to='/about'  className={({ isActive }) => (isActive ? 'active' : 'text-gray-800 font-semibold')}>About</NavLink>
+          <NavLink to='/doctor'  className={({ isActive }) => (isActive ? 'active' : 'text-gray-800 font-semibold')}>Doctor</NavLink>  
          
          <h3>Login As :-</h3>
-          <Link to="/login_doc"><button>Doctor</button></Link> 
-          <Link to="/login_pt"><button>Patient</button></Link>
+          <NavLink to="/login_doc"  className={( {isActive} ) => (isActive ? 'active' : 'text-gray-800 font-semibold')}><button>Doctor</button></NavLink> 
+          <NavLink to="/login_pt"  className={({ isActive }) => (isActive ? 'active' : 'text-gray-800 font-semibold')}><button>Patient</button></NavLink>
         </div>
 
     
