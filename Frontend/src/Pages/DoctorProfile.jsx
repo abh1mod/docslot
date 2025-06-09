@@ -10,7 +10,7 @@ function DoctorProfile(){
   const today = new Date().toISOString().slice(0, 10); 
 
 
-   const{doc_id} = useParams();
+  const{doc_id} = useParams();
   //logic for Accordion
   //for upcoming appointment
   const[isopen,setOpen]=useState(false);
