@@ -169,6 +169,69 @@ router.post('/pt_login', async (req, res) => {
     }
 });
 
+//route for pateint to get his profile details
+router.get('/pt_profile/:pt_id', async(req,res)=>{
+    try{
+        const {pt_id} = req.params;
+        const pt = await sql`
+            SELECT * FROM patient WHERE pt_id = ${pt_id}    
+        `;
+        console.log("Fetched Patient Profile",);
+        res.status(200).json({success:true,data:pt[0]});
+    }
+    catch(error){
+        console.log("Error in fetching profile",error);
+        res.status(500).json({success:false, message:"Server Error"});
+    }
+})
+//route for patient to update his profile
+router.put("/pt_update/:pt_id", async(req,res)=>{
+    try{
+        const {pt_id} = req.params;
+        const {pt_name, gender, dob, phone, email} = req.body;
+        const updated_ptProfile = await sql`
+            UPDATE patient SET name = ${pt_name},gender = ${gender}, dob = ${dob},
+            phone = ${phone}, email = ${email} 
+            WHERE pt_id = ${pt_id} RETURNING *
+        `;
+        console.log("Profile Updated Successfully",updated_ptProfile[0]);
+        res.status(201).json({success:true, data:updated_ptProfile[0]});
+    }catch(error){
+        console.log("Error in Updating Profie",error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+})
+
+//route for patient to fetch his slots
+router.get("/pt_slot/:pt_id",async(req,res)=>{
+    const {pt_id} = req.params;
+    try{
+        const apt_detail = await sql`
+            SELECT apt_id, name,start_time,status,date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date FROM appointment 
+            NATURAL JOIN doctor WHERE pt_id = ${pt_id}  order by date
+        `;
+        res.status(200).json({success:true, data:apt_detail});
+    }catch(error){
+        res.status(500).json({success:false,message:"Internal Server Error"});
+    }
+})
+
+//route for patient to delete apointment
+router.delete("/delete_apt/:apt_id",async(req,res)=>{
+    const {apt_id} = req.params;
+    try{
+        const deleted_apt = await sql`
+        DELETE FROM appointment WHERE apt_id = ${apt_id} RETURNING *
+        `;
+        console.log("Appointment Deleted Successfully",deleted_apt[0]);
+        res.status(200).json({success:true, data:deleted_apt[0]});
+
+    }catch(error){
+        console.log("Error in deleting Apointment",error);
+        res.status(500).json({success:false,message:"Internal Server Error"});
+    }
+})
+
 //route for appointment booking
 router.post("/book_appointment/:doc_id/:pt_id", async(req,res)=>{
     const{doc_id,pt_id} = req.params;
