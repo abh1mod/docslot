@@ -104,20 +104,24 @@ function BookingPortal() {
 
   return (
     <div> 
-    {isLogin === false &&
+    {/* {isLogin === false &&
             <LoginPt 
             onLoginSuccess={handleLoginSuccess} 
             onSwitchToRegister={() => {
                 setIsRegistered(false); setIsLogin(true)}
-            }/>
+            }
+            isForDashboard={false}
+            />
     }   
     {isRegistered === false && 
         <RegistrationPt
             onRegistrationSuccess={handleRegistrationSuccess}
             onSwitchToLogin={() => {
                 setIsRegistered(true); setIsLogin(false)}
-            }/>
-    }
+            }
+            isForDashboard={false}
+            />
+    } */}
 
     
     <div className="flex flex-col items-center justify-center min-h-[90vh] bg-gray-100">
