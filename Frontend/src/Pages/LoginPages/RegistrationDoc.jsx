@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DoctorImg from "../../assets/doctor.jpg";
+import DocImg from "../../assets/doctor.jpg"; // Adjust the path as needed
 import { Link } from "react-router-dom"; // Import Link for navigation
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -12,17 +12,13 @@ const RegistrationDoc = () => {
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
+
   const [mismatch, setMismacth] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
 
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    if(!error) return;
-    alert({error});
-  },[error])
 
   useEffect(()=>{
     if(!user.confirmPassword) setMismacth(false);
@@ -53,11 +49,12 @@ const RegistrationDoc = () => {
                 setOtpSent(true);
             } else {
                 console.log("Error in sending OTP");
-                setError(res.data.message);
+                console.error(res.data.message);
             }
         } catch (error) {
+            alert(error.response.data.message);
             console.error(error.response.data.message);
-            setError(error.response.data.message);
+            
         }
     };
     const handleRegistration = async (event) => {
@@ -66,13 +63,15 @@ const RegistrationDoc = () => {
         try {
             const res = await axios.post('http://localhost:3000/api/doctor/verify_email', { otpEntered:otp, email:user.email, password:user.password, doc_name:user.doc_name });
             if (res.data.success) {
-                console.log("Registration successful");
+                alert("Registration successful Proceed For Login");
+                navigate("/login_doc")
             } else {
-                setError(res.data.message);
+              alert(res.data.message);
+            
             }
         } catch (error) {
+            alert(error.response.data.message);
             console.error(error.response.data.message);
-            setError(error.response.data.message);
 
         }
     }
@@ -85,14 +84,14 @@ const RegistrationDoc = () => {
       <div className=" flex bg-white px-5 gap-2 shadow-md rounded-lg min-h-[450px] min-w-[760px]">
         <div className="flex flex-col justify-center items-center p-10 w-full">
           <img
-            src={DoctorImg}
+            src={DocImg}
             alt="Doctor"
-            className="w-[300px] h-[300px] object-cover rounded-l-lg"
+            className="w-[300px] h-[280px] object-cover rounded-l-lg"
           />
         </div>
         <div className="flex flex-col p-10 w-full">
           <h2 className="text-3xl font-bold mb-6 font-">Sign Up</h2>
-          <form className="flex flex-col gap-5">
+          <form className="flex flex-col gap-5" onSubmit={handleSendOtp}>
           
             <input 
               type="text"
@@ -137,22 +136,16 @@ const RegistrationDoc = () => {
               placeholder="🔑 Confirm Password"
             />
             <div className="flex justify-between items-center">
-              <button onClick={handleSendOtp} type="button" class="min-w-[112px] text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">Send OTP</button>
+              <button disabled={mismatch || user.confirmPassword.length===0} type="submit" className="min-w-[112px] text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">Send OTP</button>
               {mismatch && <p className="text-red-500 text-sm">Both passwords must <br/> be the same</p>}
             </div>
 
-              
-            
-              {/* <button
-                onClick={handleSendOtp}
-                  className="px-4 py-2 max-w-[110px] bg-blue-500 mi text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"  
-                >Sent OTP</button> */}
-              <Link to = "/" className="text-sm cursor-pointer underline ">Already Have an Account?</Link>
+              <Link to = "/login_doc" className="text-sm cursor-pointer underline ">Already Have an Account?</Link>
             </div> 
                           
           </form>
 
-          <div className="flex flex-col gap-5 mt-5">
+          <form className="flex flex-col gap-5 mt-5" onSubmit={handleRegistration}>
             <input 
               type="text"
               name="Enter OTP"
@@ -164,15 +157,14 @@ const RegistrationDoc = () => {
             />
               <button
                 onClick={handleRegistration}
+                type="submit"
                   className={` ${otpSent ? '':'hidden'} max-w-[112px] text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}  
               >Verify</button>
               
-              </div>
+            </form>
               
       </div>
         
-        
-
         
       </div>
       </div>

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import DocCard from "./DocCard";
 import Loading from "./Loading";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 const Doctor=()=>{
 
     const [doctors, setDoctors] = useState([]);
@@ -11,11 +13,10 @@ const Doctor=()=>{
     
     const fetchDoctors = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/fetch_all');
-        const result = await response.json();
-
-        if (result.data.length>0) {
-          setDoctors(result.data);
+        const result = await axios.get("http://localhost:3000/api/fetch_all");
+       
+        if (result.data.success) {
+          setDoctors(result.data.data);
         } else {
           console.error('Error fetching doctors:', result.message);
         }

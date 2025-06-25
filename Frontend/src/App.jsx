@@ -5,10 +5,11 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Doctor from './Pages/Doctor.jsx';
 import Error from './pages/Eroor';
-import RegistrationDoc from './pages/LoginPages/RegistrationDoc';
+import RegistrationDoc from './pages/LoginPages/RegistrationDoc.jsx';
 import LoginDoc from './pages/LoginPages/LoginDoc';
-import RegistrationPt from './pages/LoginPages/RegistrationPt';
-import LoginPt from './pages/LoginPages/LoginPt';
+import RegistrationPt from './pages/LoginPages/RegistrationPt.jsx';
+import LoginPt from './Pages/LoginPages/LoginPt';
+import ProfileSelection from './Pages/ProfileSelection.jsx'
 import DoctorProfile from './pages/DoctorProfile';
 import PtProfileEdit from './Pages/PtProfileEdit.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -17,6 +18,10 @@ import PtProfile from './Pages/PtProfile.jsx';
 
 
  const router=createBrowserRouter([
+    {
+      path:"select_profile",
+      element:<ProfileSelection/>
+    },
       {
         path:"/",
         element:<Layout/>,

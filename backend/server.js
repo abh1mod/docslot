@@ -9,7 +9,7 @@ import appRoutes from "./routes/appRoutes.js"
 import cookieParser from "cookie-parser";
 import { sql } from "./config/db.js";
 dotenv.config();
-
+import axios from "axios"
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -17,7 +17,7 @@ const app = express();
 
 app.use(cors({
   origin: "http://localhost:5173", 
-  methods: ["GET", "POST", "PUT", "DELETE"],
+//   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 
@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(morgan("dev"));//log requests
 app.use(express.json()); // use to parse incoming data 
-app.use(cors());
+
 //cors is a browser security feature that prevents which prevent one website from using the resourses of another website
 //cors is used here to handle cors errors
 

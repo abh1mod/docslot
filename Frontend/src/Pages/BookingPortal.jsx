@@ -104,7 +104,7 @@ function BookingPortal() {
 
   return (
     <div> 
-    {isLogin === false &&
+    {/* {isLogin === false &&
             <LoginPt 
             onLoginSuccess={handleLoginSuccess} 
             onSwitchToRegister={() => {
@@ -121,7 +121,7 @@ function BookingPortal() {
             }
             isForDashboard={false}
             />
-    }
+    } */}
 
     
     <div className="flex flex-col items-center justify-center min-h-[90vh] bg-gray-100">
