@@ -109,14 +109,18 @@ function BookingPortal() {
             onLoginSuccess={handleLoginSuccess} 
             onSwitchToRegister={() => {
                 setIsRegistered(false); setIsLogin(true)}
-            }/>
+            }
+            isForDashboard={false}
+            />
     }   
     {isRegistered === false && 
         <RegistrationPt
             onRegistrationSuccess={handleRegistrationSuccess}
             onSwitchToLogin={() => {
                 setIsRegistered(true); setIsLogin(false)}
-            }/>
+            }
+            isForDashboard={false}
+            />
     }
 
     

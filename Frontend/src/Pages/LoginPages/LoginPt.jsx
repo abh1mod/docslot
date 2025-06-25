@@ -5,7 +5,7 @@ import "./Registration.css"
 import PtImg from '../../assets/patient2.jpg'; // Adjust the path as needed
 
 
-function LoginPt({onLoginSuccess, onSwitchToRegister}) {
+function LoginPt({onLoginSuccess, onSwitchToRegister, isForDashboard=true}) {
     const [pt_id, setPtId] = useState('');
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
@@ -25,6 +25,7 @@ function LoginPt({onLoginSuccess, onSwitchToRegister}) {
             const res = await axios.post('http://localhost:3000/api/pt_login', { pt_id, email });
             if(res.data.success){
               const patient = res.data;
+              if(isForDashboard) navigate(`/pt_profile/${pt_id}`);
               onLoginSuccess(patient); //Callback Triggered
             }
             else{
@@ -72,7 +73,8 @@ function LoginPt({onLoginSuccess, onSwitchToRegister}) {
             <button type="submit">Login</button>
           </form>
           <div className="LoginLink">
-          <span onClick={onSwitchToRegister}>Didn't have an Account?</span>
+          {isForDashboard && <span onClick={()=>navigate("/registration_pt")}>Didn't have an Account?</span>}
+          {!isForDashboard && <span onClick={onSwitchToRegister}>Didn't have an Account?</span>}
           </div>
             
         </div>

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-const RegistrationPt = ({onRegistrationSuccess, onSwitchToLogin}) => {
+const RegistrationPt = ({onRegistrationSuccess, onSwitchToLogin, isForDashboard=true}) => {
     const [pt_name, setPtName] = useState('');
     const [gender, setGender] = useState('');
     const [dob, setDOB] = useState('');
@@ -13,6 +13,7 @@ const RegistrationPt = ({onRegistrationSuccess, onSwitchToLogin}) => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [pt_id, setPtId] = useState(-1);
 
         useEffect(()=>{
           document.body.style.overflowY="hidden";
@@ -27,14 +28,22 @@ const RegistrationPt = ({onRegistrationSuccess, onSwitchToLogin}) => {
         // const data = ;
         const res = await axios.post("http://localhost:3000/api/pt_register", {pt_name, gender, dob, phone, email});
           console.log(res.data.success);
-          onRegistrationSuccess(res.data); // Callback Triggered
+          if(res.data.success){
+            setPtId(res.data.data.pt_id);
+            if(!isForDashboard) onRegistrationSuccess(res.data); // Callback Triggered
+          }
+          
         }
         catch(error){
           console.log(error);
           setError(res.data.message);  
         }
       }
-      
+      useEffect(()=>{
+        if(pt_id===-1) return;
+        navigate(`/pt_profile/${pt_id}`);
+      },[pt_id])
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="signup-box">
@@ -107,7 +116,9 @@ const RegistrationPt = ({onRegistrationSuccess, onSwitchToLogin}) => {
             <button type="submit">Register</button>
           </form>
           <div className="LoginLink">
-          <span onClick={onSwitchToLogin}>Already have an Account?</span>
+          {isForDashboard && <span onClick={()=>navigate("/login_pt")}>Didn't have an Account?</span>}
+          {!isForDashboard && <span onClick={onSwitchToLogin}>Didn't have an Account?</span>}
+          
           
           </div>
             

@@ -10,7 +10,7 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
     const pt_id = pt_profile.pt_id;
 
     const handleSubmit = async (e)=>{
-        e.preventDefault();
+        e.preventDefault(); 
         console.log("Profile Details", pt_name, gender, dob, phone, email);
         try {
             const res = await axios.put(`http://localhost:3000/api/pt_update/${pt_id}`, {pt_name,gender,dob,phone,email});
@@ -75,7 +75,7 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
                     />
                     <label className="block mb-1 text-sm text-gray-700">Email Id</label>
                      <input
-                    type="text"
+                    type="email"
                     placeholder="Email Id"
                     defaultValue={pt_profile.email}
                     className="w-[355px] p-2 border border-gray-300 rounded-md mb-4"
