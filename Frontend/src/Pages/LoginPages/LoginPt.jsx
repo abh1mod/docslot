@@ -1,100 +1,219 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/patient2.jpg'; // Adjust the path as needed
-import { Userdata } from '../../ContextApi/Context';
-import { useContext } from 'react';
+import { useAuth } from '../../ContextAPI/AuthContext';
 
+axios.defaults.withCredentials = true;
 
-function LoginPt({onLoginSuccess, onSwitchToRegister}) {
+const LoginPt = () => {
+  const {fetchUser} = useAuth();
+  const[ forgotPass, setForgotPass] = useState(false);
+  const [user, setUser] = useState({
+    email: '',
+    password: '',
+    newPassword: '',
+    confirmPassword:''
+  });
 
-    
-    // const [pt_id, setPtId] = useState('');
-    // const [email, setEmail] = useState('');
-    // const [error, setError] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [mismatch, setMismacth] = useState('');
 
-    const[pt,setPt]=useState({
-      pt_id:"",
-      email:""
-    })
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-
-    useEffect(()=>{
-      window.scrollTo({ top: 0, behavior: "instant" });
-      document.body.style.overflowY="hidden";
-      return()=>{
-        document.body.style.overflowY="scroll";
+  useEffect(()=>{
+    if(!user.confirmPassword) setMismacth(false);
+    else if(user.confirmPassword){
+      if(user.newPassword !== user.confirmPassword){
+        setMismacth(true);
       }
-    },[]);
+      else setMismacth(false);
+    }
+  },[user.confirmPassword])
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+      
+
+    const handleLogin = async (event) => {
+        event.preventDefault(); 
         try {
-            const res = await axios.post('http://localhost:3000/api/pt_login',{ pt_id:pt.pt_id,email: pt.email });
-            if(res.data.success){
-              const patient = res.data;
-              console.log(patient)
-              navigate(`/patient/${patient.pt_id}`);
-              //onLoginSuccess(patient); //Callback Triggered
+            const res = await axios.post('http://localhost:3000/api/patient/login', { email:user.email, password:user.password });
+            console.log(res.data.success);
+            if (res.data.success) {
+                alert("Login successful");
+                console.log("Login successful");
+                fetchUser();
+                
+            } else {
+                console.log("Error in Logging in");
+                console.error(res.data.message);
             }
-            else{
-              console.log("Check Your Credentials");
-            }
-
-        } catch (err) {
-            // setError("Check Your Credentials");
-            console.error(err);
+        } catch (error) {
+            alert(error.response.data.message);
+            console.error(error.response.data.message);
         }
     };
 
-    return (
+    const handleForgotPassword = async (event) => {
+        event.preventDefault();
+        try {
+            const res = await axios.post('http://localhost:3000/api/patient/forgot_password', { email:user.email });
+            if (res.data.success) {
+              alert(res.data.message);
+              setOtpSent(true);
 
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="signup-box">
-      <div className="signup-image">
-          <img src={PtImg} alt="doctor patient image" />
-        </div>
-
-        <div className="signup-form">
-          <h2>Log In</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="input-group">
-              <span className="icon">👤</span>
-              <input
-                name='pt_id'
-                placeholder="Patient ID"
-                value={pt.pt_id}
-                required
-                onChange={(e)=> setPt(prev => ({ ...prev, [e.target.name]: e.target.value }))}
-              />
-            </div>
-            <div className="input-group">
-              <span className="icon">📧</span>
-              <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                value={pt.email}
-                required
-                 onChange={(e)=> setPt(prev => ({ ...prev, [e.target.name]: e.target.value }))}
-              />
-            </div>
+            } else {
+              alert(res.data.message);
             
-            <button type="submit">Login</button>
+            }
+        } catch (error) {
+            alert(error.response.data.message);
+            console.error(error.response.data.message);
+
+        }
+    }
+
+    const handleResetPassword = async (event) => {
+      event.preventDefault();
+      try{
+         const res = await axios.post('http://localhost:3000/api/patient/reset_password', { email:user.email, otpEntered:otp, newPassword : user.newPassword },{withCredentials: true});
+         if(res.data.success){
+            alert("Password Reset Successfully Proceed For Login");
+            window.location.reload(false);
+         }
+         else{
+            alert(res.data.message)
+         }
+      } catch(error){
+        alert(error.response.data.message);
+      }
+     
+    }
+
+  return (
+
+
+   //main container
+    <div className="flex flex-col justify-center items-center min-h-[85vh] bg-gray-100">
+      <div className=" flex bg-white px-5 gap-2 shadow-md rounded-lg min-h-[450px] min-w-[760px]">
+
+        <div className="flex flex-col p-10 w-full justify-center ">
+          <h2 className="text-3xl font-bold mb-6 font-sans">
+          { !forgotPass ? "Log In" : "Reset Password"}
+        </h2>
+
+          <form className={`flex flex-col gap-5 ${forgotPass ? 'hidden' : ''}`} onSubmit={handleLogin}>
+            <input
+              type="email"
+              name="email"
+              value={user.email}
+              onChange={handleChange}
+              className="w-full text-[15px] px-3 py-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+              placeholder="📧 Email"
+            />
+              <input
+              type="password"
+              name="password"
+              value={user.password}
+              onChange={handleChange}
+              className={`w-full text-[15px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              required
+              placeholder="🔑 Password"
+            />
+
+            
+              <button type="submit" className="max-w-[114px] text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">Log In</button>
+              {/* {mismatch && <p className="text-red-500 text-sm">Both passwords must <br/> be the same</p>} */}
+           
+
+              
+            
+              {/* <button
+                onClick={handleSendOtp}
+                  className="px-4 py-2 max-w-[110px] bg-blue-500 mi text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"  
+                >Sent OTP</button> */}
+                <div className='flex flex-col gap-2'>
+                  <button type='button' onClick={()=>{setForgotPass(true)}} className='text-sm cursor-pointer underline max-w-fit'>Forgot Password?</button>
+                  <Link to = "/registration_pt" className="text-sm cursor-pointer underline ">Didn't Have an Account?</Link>
+                </div>
+                
           </form>
-          <div className="LoginLink">
-          <span onClick={onSwitchToRegister}>Didn't have an Account?</span>
-          </div>
-            
-        </div>
+
+          <form className={`flex flex-col gap-5 ${forgotPass && !otpSent ? '' : 'hidden'}`} onSubmit={handleForgotPassword}>
+            <input
+              type="email"
+              name="email"
+              value={user.email}
+              onChange={handleChange}
+              className="w-full text-[15px] px-3 py-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+              placeholder="📧 Email"
+            />
+
+              <button type="submit" className="max-w-[114px] text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">Send OTP</button>
+              {/* {mismatch && <p className="text-red-500 text-sm">Both passwords must <br/> be the same</p>} */}
+                           
+          </form>
+
+          <form className={`flex flex-col gap-5 ${otpSent ? '' : 'hidden'}`} onSubmit={handleResetPassword}>
+            <input
+              type="text"
+              name="otp"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full text-[15px] px-3 py-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+              required
+              placeholder="🔓 Enter OTP"
+            />
+            <input
+              type="password"
+              name="newPassword"
+              value={user.newPassword}
+              onChange={handleChange}
+              disabled = {user.confirmPassword.length > 0 }
+              className={`w-full text-[15px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              required
+              placeholder="🔑 Enter New Password"
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              value={user.confirmPassword}
+              onChange={handleChange}
+              disabled = {user.newPassword.length < 6 }
+              className={`w-full text-[15px] px-3 py-2 border ${mismatch ? 'border-red-500' : 'border-gray-300'}  rounded-md focus:outline-none `}
+              required
+              placeholder="🔑 Confirm Password"
+            />
+
+              {mismatch && <p className="text-red-500 text-sm">Both passwords must be the same</p>}
+              <button type="submit" disabled = {mismatch} className="max-w-fit text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">Reset Password</button>
+                           
+          </form>
+             
+      </div>
+      <div className="flex flex-col justify-center items-center w-full">
+          <img
+            src={PtImg}
+            alt="Patient"
+            className="w-[290px] h-[240px] object-cover rounded-l-lg"
+          />
+        </div>        
         
       </div>
-     </div>
-        
-    );
-}
+      </div>
+    
+  );
+};
 
 export default LoginPt;

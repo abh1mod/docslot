@@ -1,8 +1,7 @@
 
 const defaultPicture = "https://png.pngtree.com/png-clipart/20241112/original/pngtree-smiling-cartoon-doctor-with-stethoscope-clipart-png-image_16976469.png";
 const DocProfileCard=({events})=>{
-   
-    
+       
     const{name,specialization,phone,email,image,about_us}=events
     return <>
         <div className="max-w-[260px] flex flex-col items-center justify-center gap-1">

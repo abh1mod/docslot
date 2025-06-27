@@ -3,19 +3,19 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaArrowAltCircleDown } from "react-icons/fa"
 import { FaArrowCircleUp } from "react-icons/fa";
-import EditDoctor from "../Modal/EditDoctor";
-
-// import { Userdata } from "../ContextApi/Context"; 
-// import { useContext } from "react";
-
+import { useAuth } from "../ContextAPI/AuthContext";
+import LoginDoc from "./LoginPages/LoginDoc";
+import { useNavigate } from "react-router-dom";
 
 function DoctorProfile(){
-  
+  const {user, isLogin} = useAuth();
+  const navigate = useNavigate();
   //getting current date
   const today = new Date().toISOString().slice(0, 10); 
-  // const { loged, setLoged } = useContext(Userdata);
 
-   const{doc_id} = useParams();
+
+
+  // const{doc_id} = useParams();
   //logic for Accordion
   //for upcoming appointment
   const[isopen,setOpen]=useState(false);
@@ -32,9 +32,9 @@ function DoctorProfile(){
 //use to fetch data form api for respective doc appointment
     useEffect(()=>{
         const fetchProfiledata = async()=>{
+          if(!user?.doc_id) return;
             try{
-              
-              const res = await axios.get(`http://localhost:3000/api/my_day/${doc_id}`);
+              const res = await axios.get(`http://localhost:3000/api/my_day/${user?.doc_id}`);
               if(res.data.success){
                 fetchData(res.data.data);
                
@@ -49,15 +49,17 @@ function DoctorProfile(){
         }
         fetchProfiledata();
 //rendering again when respective id data changes
-    },[doc_id]);
+    },[user?.doc_id]);
 
  console.log(fetchdata)
     const[doctor, setDoctor] = useState({});
-
-
-   const fetchProfile = async()=>{
+    
+    //fetch only doctor information
+    useEffect(()=>{
+        const fetchProfile = async()=>{
+          if(!user?.doc_id) return;
             try{
-              const res = await axios.get(`http://localhost:3000/api/doc_profile/${doc_id}`);
+              const res = await axios.get(`http://localhost:3000/api/doc_profile/${user?.doc_id}`);
               if(res.data.success){
                 setDoctor(res.data.data);
                 //  localStorage.setItem("user",JSON.stringify(res.data.data));
@@ -74,8 +76,8 @@ function DoctorProfile(){
     useEffect(()=>{
         fetchProfile();
 
-    },[doc_id,edit]);
-  //  const{name,specialization,phone,email,id,image,about_us}=doctor
+    },[user?.doc_id, isLogin]);
+  //  const{name,specialization,phone,email,id,image,about_us}=user;
    
    //filtering upcoming appointment form fetchdata
    const upcomingAppointments = fetchdata.filter((item) => {
@@ -92,27 +94,36 @@ const count=upcomingAppointments.filter((item)=>{
   const appointmentDate = item.date.slice(0, 10);
   return appointmentDate < today;
 });
+    
+    const handleLogout = async() =>{
+        try{
+            const res = await axios.post("http://localhost:3000/api/doctor/logout");
+            if(res.data.success){
+                alert(res.data.message);
+                navigate("/");
+                window.location.reload(true);
+            }else{
+                alert(res.data.message);
+            }
+        }catch(error){
+            console.log(error);
+        }
+    }
 
-const handleclose=()=>{
-  setEdit(false);
-}
 
-useEffect(() => {
-  console.log("Doctor state updated:", doctor);
-}, [doctor]);
-
+  if(!isLogin) return <LoginDoc/>
 //simple html+tailwind
 return <>
   <div className="bg-gray-100 min-h-screen flex flex-col items-center ">
   <div className="bg-white shadow-lg rounded-xl flex flex-col md:flex-row w-full max-w-4xl">
    
-    <div className="p-6  flex flex-col items-center border-b md:border-b-0 md:border-r border-gray-200">
-      <img src={doctor.image} alt="Doctor profile" className="rounded-full w-24 h-24 object-cover mb-4" />
-      <h2 className="text-xl font-semibold text-gray-800">{doctor.name}</h2>
-      <p className="text-gray-600 mb-4">{doctor.specialization}</p>
+    <div className="p-6 md:w-1/3 flex flex-col items-center border-b md:border-b-0 md:border-r border-gray-200">
+      <img src={user?.image} alt="Doctor profile" className="rounded-full w-[145px] h-[145px] object-cover mb-4 mt-6" />
+      <h2 className="text-xl font-semibold text-gray-800">{user?.name}</h2>
+      <p className="text-gray-600 mb-4">{user?.specialization}</p>
       <div className="text-gray-600 space-y-2 text-sm">
-        <p><i className="fas fa-phone mr-2"></i>{doctor.phone}</p>
-        <p><i className="fas fa-envelope mr-2"></i>{doctor.email}</p>
+        <p><i className="fas fa-phone mr-2"></i>{user?.phone}</p>
+        <p><i className="fas fa-envelope mr-2"></i>{user?.email}</p>
         <p><i className="fas fa-map-marker-alt mr-2"></i>Boston, MA</p>
       </div>
        <button onClick={()=>setEdit(true)} className="hover:bg-gray-300 transition-all ease-in-out w-[6rem] h-[2.5rem] ml-16 mb-2 rounded-xl bg-gray-200 font-semibold text-gray-700 p-1">Edit Profile</button>
@@ -121,8 +132,14 @@ return <>
    {edit && <EditDoctor doctor={doctor} setDoctor={setDoctor} closeModal={handleclose} />}
 
  
-    <div className="flex-1 p-6">
-      <h1 className="text-2xl font-bold mb-4">Doctor Dashboard</h1>
+    <div className="flex-1 p-6" >
+    <div className="flex justify-between items-center">
+      <h1 className="text-2xl font-bold mb-4 mt-4">Doctor Dashboard</h1>
+       <button onClick={handleLogout} class="mr-4 rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2" type="button">
+                    Logout
+            </button>
+       </div>
+      
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="bg-blue-500 text-white rounded-lg flex flex-col items-center justify-center p-4">
           <p className="text-sm">Appointments Today</p>
@@ -219,3 +236,169 @@ return <>
 </>
 }
 export default DoctorProfile;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { useParams } from 'react-router-dom';
+// import axios from 'axios';
+// import { useEffect, useState } from 'react';
+
+// function DoctorProfile() {
+//   const { doc_id } = useParams();
+//   const [doctor, setDoctor] = useState([]);
+
+//   useEffect(() => {
+//     const fetchProfile = async () => {
+//       try {
+//         const res = await axios.get(`http://localhost:3000/api/doc_profile?doc_id=${doc_id}`);
+//         if (res.data.success) {
+//           // If API returns an array
+//           setDoctor(res.data.data); 
+//           console.log(res.data.data);
+//         } else {
+//           console.log("Error from try block");
+//         }
+//       } catch (error) {
+//         console.log("Error from catch block", error);
+//       }
+//     };
+
+//     fetchProfile();
+//   }, [doc_id]);
+
+//   return (
+//     <div>
+//       <h2>Welcome, Doctor {doctor.name || doc_id}</h2>
+//       <p>ID: {doctor.doc_id}</p>
+//       <p>Specialization: {doctor.specialization}</p>
+//       <p>email: {doctor.email}</p>
+//       <p>phone: {doctor.phone}</p>
+//       {/* Add more fields as needed */}
+//     </div>
+//   );
+// }
+
+// export default DoctorProfile;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { useParams } from 'react-router-dom';
+// import axios from 'axios';
+// import { useEffect, useState } from 'react';
+
+// function DoctorProfile() {
+//   const { doc_id } = useParams();
+//   const [doctor, setDoctor] = useState([]);
+
+//   useEffect(() => {
+//     const fetchProfile = async () => {
+//       try {
+//         const res = await axios.get(`http://localhost:3000/api/doc_profile?doc_id=${doc_id}`);
+//         if (res.data.success) {
+//           // If API returns an array
+//           setDoctor(res.data.data); 
+//           console.log(res.data.data);
+//         } else {
+//           console.log("Error from try block");
+//         }
+//       } catch (error) {
+//         console.log("Error from catch block", error);
+//       }
+//     };
+
+//     fetchProfile();
+//   }, [doc_id]);
+
+//   return (
+//     <div>
+//       <h2>Welcome, Doctor {doctor.name || doc_id}</h2>
+//       <p>ID: {doctor.doc_id}</p>
+//       <p>Specialization: {doctor.specialization}</p>
+//       <p>email: {doctor.email}</p>
+//       <p>phone: {doctor.phone}</p>
+//       {/* Add more fields as needed */}
+//     </div>
+//   );
+// }
+
+// export default DoctorProfile;

@@ -6,25 +6,22 @@ import "./LoginPages/Registration.css";
 import { Link } from "react-router-dom";
 import LoginPt from "./LoginPages/LoginPt.jsx";
 import RegistrationPt from "./LoginPages/RegistrationPt.jsx";
-
-
+import { useAuth } from "../ContextAPI/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function BookingPortal() {
     const { doc_id } = useParams();
     const [doctor, fetchDoctor] = useState({});
     const [aptDetails, setAppointment] = useState({});
-    const [isLogin, setIsLogin] = useState(false);
     const [isRegistered, setIsRegistered] = useState(true);
     const [busy_slots, setBusySlots] = useState([]);
     const [freeSlots, setFreeSlots] = useState([]);
-    const [pt_name, setPtName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [pt_id, setPtId] = useState("");
     const [start_time, setStartTime] = useState("");
     const [date, setDate] = useState("");
     const [remarks, setRemarks] = useState("No Remarks");
+    const {fetchUser, isLogin, user} = useAuth();
 
-
+    const navigate = useNavigate();
     //slot update as soon as date changes
     useEffect(()=>{
         const fetchSlot = async()=>{
@@ -67,16 +64,16 @@ function BookingPortal() {
             }
         }
         fetchProfile();
-
     }, [])
     
     const handleBooking = async (event) => {
         event.preventDefault();
         try{
             console.log(start_time, date);
-            const res = await axios.post(`http://localhost:3000/api/book_appointment/${doc_id}/${pt_id}`, {start_time,date,remarks});
+            const res = await axios.post(`http://localhost:3000/api/book_appointment/${doc_id}/${user.pt_id}`, {start_time,date,remarks});
             if(res.data.success){
-                console.log("Apointment Booked Successfully",res.data.data);
+                alert(res.data.message);
+                navigate("/");
             }
             else console.log("Error From try Block appointment booking")
         }
@@ -84,41 +81,11 @@ function BookingPortal() {
             console.log("Error from Catch Block", error);
         }
     }
-    const handleLoginSuccess = (userData) => {
-        setPtName(userData.data.name);
-        setPhone(userData.data.phone);
-        setPtId(userData.data.pt_id);
-
-        setIsLogin(true);
-    };
-    const handleRegistrationSuccess = (userData) => {
-        setPtName(userData.data.name);
-        setPhone(userData.data.phone);
-        setPtId(userData.data.pt_id);
-
-        setIsRegistered(true);
-        setIsLogin(true);
-    };
 
     
 
   return (
     <div> 
-    {isLogin === false &&
-            <LoginPt 
-            onLoginSuccess={handleLoginSuccess} 
-            onSwitchToRegister={() => {
-                setIsRegistered(false); setIsLogin(true)}
-            }/>
-    }   
-    {isRegistered === false && 
-        <RegistrationPt
-            onRegistrationSuccess={handleRegistrationSuccess}
-            onSwitchToLogin={() => {
-                setIsRegistered(true); setIsLogin(false)}
-            }/>
-    }
-
     
     <div className="flex flex-col items-center justify-center min-h-[90vh] bg-gray-100">
       <div className="flex gap-4 bg-white shadow-md rounded-lg p-8 min-w-[830px] max-w-md  min-h-[550px]">
@@ -134,7 +101,7 @@ function BookingPortal() {
                     type="text"
                     className="w-[400px] p-2 border border-gray-300 rounded-md mb-4"
                     placeholder="Enter your name" 
-                    defaultValue={pt_name}
+                    defaultValue={user?.name}
                     disabled 
                 />
                 
@@ -165,7 +132,7 @@ function BookingPortal() {
                     type="text"
                     className="w-[400px] p-2 border border-gray-300 rounded-md mb-4"
                     placeholder="Enter your Contact Number"   
-                    defaultValue={phone}
+                    defaultValue={user?.phone}
                     disabled
                 />
                 <label className="block mb-2 text-l font-medium text-gray-700">Remarks</label>

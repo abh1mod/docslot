@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import DocCard from "./DocCard";
 import Loading from "./Loading";
 import { Link } from "react-router-dom";
-const Doctor=()=>{
+import axios from "axios";
+import { useAuth } from "../ContextAPI/AuthContext";
+import LoginPt from "./LoginPages/LoginPt";
+import { useNavigate } from "react-router-dom";
 
+const Doctor=()=>{
+    const {isLogin, user} = useAuth();
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    
+    const navigate = useNavigate();
+  useEffect(() => {    
     const fetchDoctors = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/fetch_all');
-        const result = await response.json();
-
-        if (result.data.length>0) {
-          setDoctors(result.data);
+        const result = await axios.get("http://localhost:3000/api/fetch_all");
+       
+        if (result.data.success) {
+          setDoctors(result.data.data);
         } else {
           console.error('Error fetching doctors:', result.message);
         }
@@ -24,12 +27,13 @@ const Doctor=()=>{
       } finally {
         setLoading(false);
       }
-    };
-    
-      fetchDoctors();
+    };  
+    fetchDoctors();
+  }, [isLogin]);
+ 
+    if (!isLogin) return <LoginPt/>
   
-  }, []);
-    return<div className="bg-white-100 min-h-screen p-4">
+     return <div className="bg-white-100 min-h-screen p-4">
       <ul className="p-4 space-y-4">
   {loading ? (
     <Loading/>
@@ -44,8 +48,6 @@ const Doctor=()=>{
         </Link>
       </li>
   
-      
-      
     ))
   )}
 
