@@ -3,9 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/img.jpg'; // Adjust the path as needed
-
+import { useAuth } from '../../ContextAPI/AuthContext';
 
 const LoginDoc = () => {
+  const {fetchUser} = useAuth();
   const[ forgotPass, setForgotPass] = useState(false);
   const [user, setUser] = useState({
     email: '',
@@ -48,6 +49,8 @@ const LoginDoc = () => {
             if (res.data.success) {
                 alert("Login successful");
                 console.log("Login successful");
+                fetchUser();
+                navigate("/doc_profile");
             } else {
                 console.log("Error in Logging in");
                 console.error(res.data.message);

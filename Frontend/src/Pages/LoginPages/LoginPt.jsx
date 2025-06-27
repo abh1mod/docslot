@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/patient2.jpg'; // Adjust the path as needed
+import { useAuth } from '../../ContextAPI/AuthContext';
+
 axios.defaults.withCredentials = true;
 
 const LoginPt = () => {
+  const {fetchUser} = useAuth();
   const[ forgotPass, setForgotPass] = useState(false);
   const [user, setUser] = useState({
     email: '',
@@ -17,8 +20,8 @@ const LoginPt = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
   const [mismatch, setMismacth] = useState('');
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
 
   useEffect(()=>{
     if(!user.confirmPassword) setMismacth(false);
@@ -38,7 +41,7 @@ const LoginPt = () => {
     }));
   };
 
-    
+      
 
     const handleLogin = async (event) => {
         event.preventDefault(); 
@@ -48,6 +51,8 @@ const LoginPt = () => {
             if (res.data.success) {
                 alert("Login successful");
                 console.log("Login successful");
+                fetchUser();
+                
             } else {
                 console.log("Error in Logging in");
                 console.error(res.data.message);
@@ -82,8 +87,8 @@ const LoginPt = () => {
       try{
          const res = await axios.post('http://localhost:3000/api/patient/reset_password', { email:user.email, otpEntered:otp, newPassword : user.newPassword },{withCredentials: true});
          if(res.data.success){
-          alert("Password Reset Successfully Proceed For Login");
-          window.location.reload(false);
+            alert("Password Reset Successfully Proceed For Login");
+            window.location.reload(false);
          }
          else{
             alert(res.data.message)

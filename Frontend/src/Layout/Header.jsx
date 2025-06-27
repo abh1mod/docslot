@@ -8,21 +8,19 @@ const Header=()=>{
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center h-16">
         
-       
+
         <div className="flex-shrink-0 text-2xl font-bold text-blue-600">
-          DocSlot
+        <NavLink to = "/">DocSlot</NavLink>
         </div>
 
      
         <div className="hidden md:flex space-x-6">
           
-          <NavLink to='/' className="nav-link text-gray-700 hover:text-blue-600 font-medium">Home</NavLink>
           <NavLink to='/about' className="nav-link text-gray-700 hover:text-blue-600 font-medium">About</NavLink>
-          <NavLink to='/doctor' className="nav-link text-gray-700 hover:text-blue-600 font-medium">Doctor</NavLink>  
+          <NavLink to='/doctor' className="nav-link text-gray-700 hover:text-blue-600 font-medium">BookAppointment</NavLink>  
          
-         <h3>Login As :-</h3>
-          <Link to="/login_doc"><button>Doctor</button></Link> 
-          <Link to="/login_pt"><button>Patient</button></Link>
+          <Link to="/pt_profile"><button>PtDashboard</button></Link>
+          <Link to="/doc_profile"><button>DocDashboard</button></Link>
         </div>
 
     

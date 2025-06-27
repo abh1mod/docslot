@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function PtProfileEdit({pt_profile, setIsEditing}) {
     const [pt_name, setPtName] = useState(pt_profile.name);
@@ -8,6 +9,7 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
     const [phone, setPhone] = useState(pt_profile.phone);
     const [email, setEmail] = useState(pt_profile.email);
     const pt_id = pt_profile.pt_id;
+    const navigate = useNavigate();
 
     const handleSubmit = async (e)=>{
         e.preventDefault(); 
@@ -17,9 +19,24 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
             if(res.data.success){
                 console.log("Profile Updated Successfully",res.data.data);
                 setIsEditing(false);
+                handleLogout();
             }
         } catch (error) {
             console.error("Error updating profile:", error);
+        }
+    }
+        const handleLogout = async() =>{
+        try{
+            const res = await axios.post("http://localhost:3000/api/patient/logout");
+            if(res.data.success){
+                alert("Profile Updated Successfully! Please Log In Again");
+                navigate("/");
+                window.location.reload(true);
+            }else{
+                alert(res.data.message);
+            }
+        }catch(error){
+            console.log(error);
         }
     }
 
@@ -78,6 +95,7 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
                     type="email"
                     placeholder="Email Id"
                     defaultValue={pt_profile.email}
+                    disabled
                     className="w-[355px] p-2 border border-gray-300 rounded-md mb-4"
                     onChange={(e) => setEmail(e.target.value)}
                     />

@@ -10,31 +10,7 @@ import {auth, isPatient, isDoctor } from '../middleware/auth.js';
 dotenv.config();
 
 
-router.get("/patient/me", async (req, res) => {
-  try {
-    const token = req.cookies.token;
-    if (!token) {
-      return res.status(401).json({ success: false, message: "Not logged in" });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.status(200).json({
-      success: true,
-      data: {
-        pt_id: decoded.pt_id,
-        name: decoded.name,
-        phone: decoded.phone,
-        email: decoded.email,
-        gender: decoded.gender,
-        dob: decoded.dob,
-        role: decoded.role
-      }
-    });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: "Invalid or expired token" });
-  }
-});
-
-router.get("/doctor/me", async (req, res) => {
+router.get("/my_profile", async (req, res) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -43,19 +19,40 @@ router.get("/doctor/me", async (req, res) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    return res.status(200).json({
-      success: true,
-      data: {
-            doc_id: decoded.doc_id,
-            role: decoded.role,
-            name: decoded.name,
-            specialization: decoded.specialization,
-            phone:decoded.phone,
-            email:decoded.email,
-            image:decoded.image,
-            about_us:decoded.about_us
-      }
-    });
+    if (decoded.role === "patient") {
+      return res.status(200).json({
+        success: true,
+        role: "patient",
+        data: {
+          pt_id: decoded.pt_id,
+          name: decoded.name,
+          phone: decoded.phone,
+          email: decoded.email,
+          gender: decoded.gender,
+          dob: decoded.dob,
+          role: "patient"
+        },
+      });
+    }
+
+    else if (decoded.role === "doctor") {
+      return res.status(200).json({
+        success: true,
+        role: "doctor",
+        data: {
+          doc_id: decoded.doc_id,
+          name: decoded.name,
+          specialization: decoded.specialization,
+          phone: decoded.phone,
+          email: decoded.email,
+          image: decoded.image,
+          about_us: decoded.about_us,
+          role: "doctor"
+        },
+      });
+    }
+
+
   } catch (error) {
     return res.status(500).json({ success: false, message: "Invalid or expired token" });
   }
@@ -165,12 +162,12 @@ router.post('/doctor/login', async(req, res)=>{
         
             process.env.JWT_SECRET,
 
-            { expiresIn: '10m' }
+            { expiresIn: '20m' }
         );
 
         const options = {
             httpOnly: true, 
-            maxAge: 10 * 60 * 1000
+            maxAge: 20 * 60 * 1000
         };
         res.cookie("token", token,options).status(200).json({
             success:true, 
@@ -357,13 +354,13 @@ router.post('/patient/login', async(req, res)=>{
         
             process.env.JWT_SECRET,
 
-            { expiresIn: '10m' }
+            { expiresIn: '20m' }
         );
 
         const options = {
             httpOnly: true,
             secure: false,       
-            maxAge: 10 * 60 * 1000
+            maxAge: 20 * 60 * 1000
         };
         res.cookie("token", token, options).status(200).json({
             success:true, 
@@ -383,7 +380,7 @@ router.post('/patient/logout', auth, isPatient, async (req, res) => {
     try {
         res.clearCookie("token", {
             httpOnly: true,
-        }).status(200).json({ success: true, message: "Logout Successful" });
+        }).status(200).json({ success: true, message: "Logout Successfully" });
     } catch (error) {
         console.error("Logout Error:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -452,54 +449,13 @@ router.post('/patient/reset_password', async (req, res) => {
 router.get("/fetch_all",auth, isPatient, async(req,res)=>{
     try{
         const doctors = await sql`
-            SELECT doc_id,name, specialization,phone, email, about_us, image FROM doctor
+            SELECT doc_id, name, specialization,phone, email, about_us, image FROM doctor
+            ORDER BY id DESC
         `;
         console.log("fetched doctors",doctors);
         res.status(200).json({success:true, data:doctors})
     } catch(error){
         console.log("Error in getting List", error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
-    }
-});
-
-//CREATE route for doctor to register 
-router.post("/doc_register", async(req,res)=>{
-    const {doc_name, specialization, email} = req.body;
-
-    if(!doc_name || !specialization || !email ){
-        return res.status(400).json({success:false, message:"Please Enter All Fields"})
-    }
-    try{
-        const newDoctor = await sql`
-        INSERT INTO doctor(name, specialization, email) 
-        VALUES(${doc_name},${specialization},${email})
-        RETURNING *
-        `;
-        console.log("You Are Registered Successfully", newDoctor);
-        res.status(201).json({success: true, data: newDoctor[0]});
-    }catch(error){
-        console.log("Error in Registration", error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
-    }
-});
-
-//route for doctor to login
-router.post('/doc_login', async (req, res) => {
-    const {doc_id, email} = req.body;
-    if(!doc_id || !email ){
-        return res.status(400).json({success:false, message:"Please Enter All Fields"})
-    }
-    try{
-        const doc = await sql`
-        SELECT * FROM doctor WHERE doc_id = ${doc_id} AND email = ${email}
-        `;
-        if(doc.length===0){
-            return res.status(401).json({success:false, message:"Check Your Credentials"});
-        }
-        console.log("Logged In successfully", doc);
-        res.status(201).json({success: true, data: doc[0]});
-    }catch(error){
-        console.log("Logging Error", error);
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
@@ -571,52 +527,9 @@ router.delete("/remove_acc/:id", async(req,res)=>{
     }
 });
 
-//route to register patient
-router.post("/pt_register", async(req,res)=>{
-    const {pt_name, gender,dob,phone,email} = req.body;
-
-    if(!pt_name || !gender || !dob || !phone || !email){
-        return res.status(400).json({success:false, message:"Please Enter All Fields"})
-    }
-    try{
-        const newPatient = await sql`
-            INSERT INTO patient(name,gender,dob,phone,email) 
-            VALUES(${pt_name},${gender},${dob},${phone},${email})
-            RETURNING *
-        `;
-        console.log("Patient Registered Successfully",newPatient[0]);
-        res.status(201).json({success:true, data:newPatient[0]});
-    }
-    catch(error){
-        console.log("Error in Registration", error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
-    }
-});
-
-//route for patient to login
-router.post('/pt_login', async (req, res) => {
-    const {pt_id, email} = req.body;
-    if(!pt_id || !email ){
-        return res.status(400).json({success:false, message:"Please Enter All Fields"})
-    }
-    try{
-        const patient = await sql`
-        SELECT * FROM patient WHERE pt_id = ${pt_id} AND email = ${email}
-        `;
-        if(patient.length === 0){
-            console.log("Check Your Credentials");
-            return res.status(401).json({success:false, message:"Check Your Credentials"});
-        }
-        console.log("Logged In successfully", patient[0]);
-        res.status(201).json({success: true, data: patient[0]});
-    }catch(error){
-        console.log("Logging Error", error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
-    }
-});
 
 //route for pateint to get his profile details
-router.get('/pt_profile/:pt_id', async(req,res)=>{
+router.get('/pt_profile/:pt_id', auth, isPatient, async(req,res)=>{
     try{
         const {pt_id} = req.params;
         const pt = await sql`
@@ -631,7 +544,7 @@ router.get('/pt_profile/:pt_id', async(req,res)=>{
     }
 })
 //route for patient to update his profile
-router.put("/pt_update/:pt_id", async(req,res)=>{
+router.put("/pt_update/:pt_id",auth, isPatient, async(req,res)=>{
     try{
         const {pt_id} = req.params;
         const {pt_name, gender, dob, phone, email} = req.body;
@@ -649,7 +562,7 @@ router.put("/pt_update/:pt_id", async(req,res)=>{
 })
 
 //route for patient to fetch his slots
-router.get("/pt_slot/:pt_id",async(req,res)=>{
+router.get("/pt_slot/:pt_id",auth, isPatient, async(req,res)=>{
     const {pt_id} = req.params;
     try{
         const apt_detail = await sql`
@@ -664,7 +577,7 @@ router.get("/pt_slot/:pt_id",async(req,res)=>{
 })
 
 //route for patient to delete apointment
-router.delete("/delete_apt/:apt_id",async(req,res)=>{
+router.delete("/delete_apt/:apt_id",auth, isPatient, async(req,res)=>{
     const {apt_id} = req.params;
     try{
         const deleted_apt = await sql`
@@ -680,7 +593,7 @@ router.delete("/delete_apt/:apt_id",async(req,res)=>{
 })
 
 //route for appointment booking
-router.post("/book_appointment/:doc_id/:pt_id", async(req,res)=>{
+router.post("/book_appointment/:doc_id/:pt_id",auth, isPatient, async(req,res)=>{
     const{doc_id,pt_id} = req.params;
     const{date,start_time,remarks} = req.body;
         if(!doc_id || !pt_id){
@@ -693,7 +606,7 @@ router.post("/book_appointment/:doc_id/:pt_id", async(req,res)=>{
         RETURNING *
         `;
         console.log("Appoitment Booked Successfully",appointment);
-        res.status(201).json({success:true,data:appointment[0]});
+        res.status(201).json({success:true,data:appointment[0], message:"Apointment Booked Successfully"});
 
     } catch(error){
         console.log("Error in booking appoitment", error);

@@ -48,7 +48,7 @@ import PtProfile from './Pages/PtProfile.jsx';
         element:<LoginDoc/>
       },
       {
-        path:"/doctor/:doc_id",
+        path:"/doc_profile",
         element:<DoctorProfile/>
       },
       {
@@ -64,7 +64,7 @@ import PtProfile from './Pages/PtProfile.jsx';
         element:<BookingPortal/>
       },
       {
-        path:"/pt_profile/:pt_id",
+        path:"/pt_profile",
         element:<PtProfile/>
       },{
         path:"/pt_edit/:pt_id",
