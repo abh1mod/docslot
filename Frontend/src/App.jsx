@@ -10,7 +10,7 @@ import LoginDoc from './pages/LoginPages/LoginDoc';
 import RegistrationPt from './pages/LoginPages/RegistrationPt';
 import LoginPt from './pages/LoginPages/LoginPt';
 import DoctorProfile from './Pages/DoctorProfile';
-
+import Provider from "./ContextApi/Context"
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import BookingPortal from './Pages/BookingPortal';
 
@@ -43,7 +43,7 @@ import BookingPortal from './Pages/BookingPortal';
       },
       {
         path:"/doctor/:doc_id",
-        element:<DoctorProfile/>
+        element:<Provider><DoctorProfile/></Provider>
       },
       {
         path:"/registration_pt",

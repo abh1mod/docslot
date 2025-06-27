@@ -3,12 +3,22 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/patient2.jpg'; // Adjust the path as needed
+import { Userdata } from '../../ContextApi/Context';
+import { useContext } from 'react';
 
 
 function LoginPt({onLoginSuccess, onSwitchToRegister}) {
-    const [pt_id, setPtId] = useState('');
-    const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
+
+    
+    // const [pt_id, setPtId] = useState('');
+    // const [email, setEmail] = useState('');
+    // const [error, setError] = useState('');
+
+    const[pt,setPt]=useState({
+      pt_id:"",
+      email:""
+    })
+
     const navigate = useNavigate();
 
     useEffect(()=>{
@@ -19,20 +29,23 @@ function LoginPt({onLoginSuccess, onSwitchToRegister}) {
       }
     },[]);
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const res = await axios.post('http://localhost:3000/api/pt_login', { pt_id, email });
+            const res = await axios.post('http://localhost:3000/api/pt_login',{ pt_id:pt.pt_id,email: pt.email });
             if(res.data.success){
               const patient = res.data;
-              onLoginSuccess(patient); //Callback Triggered
+              console.log(patient)
+              navigate(`/patient/${patient.pt_id}`);
+              //onLoginSuccess(patient); //Callback Triggered
             }
             else{
               console.log("Check Your Credentials");
             }
 
         } catch (err) {
-            setError("Check Your Credentials");
+            // setError("Check Your Credentials");
             console.error(err);
         }
     };
@@ -51,21 +64,22 @@ function LoginPt({onLoginSuccess, onSwitchToRegister}) {
             <div className="input-group">
               <span className="icon">👤</span>
               <input
-                type="password"
+                name='pt_id'
                 placeholder="Patient ID"
-                value={pt_id}
+                value={pt.pt_id}
                 required
-                onChange={(event)=> setPtId(event.target.value)}
+                onChange={(e)=> setPt(prev => ({ ...prev, [e.target.name]: e.target.value }))}
               />
             </div>
             <div className="input-group">
               <span className="icon">📧</span>
               <input
+                name="email"
                 type="email"
                 placeholder="Email"
-                value={email}
+                value={pt.email}
                 required
-                onChange={(event)=> setEmail(event.target.value)}
+                 onChange={(e)=> setPt(prev => ({ ...prev, [e.target.name]: e.target.value }))}
               />
             </div>
             

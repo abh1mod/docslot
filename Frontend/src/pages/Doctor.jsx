@@ -29,49 +29,6 @@ const Doctor=()=>{
       fetchDoctors();
   
   }, []);
-  // console.log(doctors)
-    // const[User,setUser]=useState([])
-    // const data=[{"name":"himanshu","specialization":"brainlogist","phone":"988766554","email":"hsisodia988766@dyuvas","room_no":"12","id":10,"doc_id":"doc_10"},
-    //     {"name":"pranjula","specialization":"brainlogsafast","phone":"988766564","email":"jdsgyjsdf","room_no":"12","id":11,"doc_id":"doc_11"}
-    // ]
-
-//     useEffect(()=>{
-//         fetchdata();
-//     },[])
-//    async function fetchdata(){
-//         try{
-//         const res=await fetch(`http://localhost:3000/api/fetch_all`)
-//         const data=await res.json();
-//         if(data.data.length>0){
-//         setUser(data);
-//         }
-//         }
-//         catch(error){
-//             console.log("Fetch nahi ho rha")
-//         }
-    //     try {
-    //     const res = await fetch(`http://localhost:3000/api/fetch_all`);
-    //     const data = await res.json();
-
-    //     // Check if data is an array
-    //     if (Array.isArray(data)) {
-    //       setUser(data);
-    //     } else if (data && data.User && Array.isArray(data.User)) {
-    //       // If your API response is { users: [...] }
-    //       setUser(data.User);
-    //     } else {
-    //       console.log("Unexpected data format:", data);
-    //       setUser([]); // fallback to empty array
-    //     }
-    //   } catch (error) {
-    //     console.log("Fetch nahi ho raha:", error);
-    //     setUser([]); // fallback to empty array
-    //   }
-        
-    // console.log(User)
-    // }
-    // fetchdata();
-  
     return<div className="bg-white-100 min-h-screen p-4">
       <ul className="p-4 space-y-4">
   {loading ? (
