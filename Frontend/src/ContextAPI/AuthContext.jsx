@@ -1,0 +1,60 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
+
+const AuthContext = createContext();
+
+const AuthProvider = ({ children }) => {
+    const [isLogin, setIsLogin] = useState(false);
+    const [user, setUser] = useState(null);
+    const fetchUser = async () => {
+            try {
+            const res = await axios.get("http://localhost:3000/api/my_profile", {
+                withCredentials: true,
+            });
+            if(res.data.success) {
+                setIsLogin(true);
+                setUser(res.data.data);
+                console.log(isLogin);
+                console.log("User fetched:", res.data.data);
+            }else{
+                setIsLogin(false);
+                setUser(null);
+            }
+            } catch (error) {
+                setIsLogin(false);
+                setUser(null);
+                console.log("User not logged in");
+            }
+        };
+
+    useEffect(()=>{
+       fetchUser();
+    },[]);
+
+    useEffect(() => {
+      let timeoutId;
+
+      if (isLogin) {
+          timeoutId = setTimeout(() => {
+              alert("Session timed out. Please log in again.");
+              window.location.href = "/";
+          }, 20 * 60 * 1000);
+      }
+
+      return () => {
+          clearTimeout(timeoutId); 
+      };
+  }, [isLogin]);
+
+
+
+  return (
+    <AuthContext.Provider value={{ isLogin, setIsLogin, user, setUser, fetchUser}}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+const useAuth = () => useContext(AuthContext);
+
+export {useAuth, AuthProvider };
