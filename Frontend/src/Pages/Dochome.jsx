@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import React from 'react';
 import '../index.css'; // Ensure you have Tailwind CSS set up in your project
 import TextButton from "../components/HomePage/TextButton";
-import doctor from "../assets/image 17.png"
+import doctor from "../assets/doctor.png"
 import back from "../assets/Vector.png"
 import {home} from "../data/home"
 import Button from "../components/HomePage/Button";
@@ -17,43 +17,44 @@ import { FaPinterest } from "react-icons/fa";
 import { FaTwitch } from "react-icons/fa";
 import { FaWebflow } from "react-icons/fa6";
 import { FaMicrosoft } from "react-icons/fa";
+import { dochome } from "../data/dochome";
+import Dochome from "../components/HomePage/Dochome";
 
 const Home=()=>{
 
-//    const [doctors, setDoctors] = useState([]);
+   const [doctors, setDoctors] = useState([]);
 
-//    useEffect(() => {    
-//     const fetchDoctors = async () => {
-//       try {
-//         const result = await axios.get("http://localhost:3000/api/fetch_all");
+   useEffect(() => {    
+    const fetchDoctors = async () => {
+      try {
+        const result = await axios.get("http://localhost:3000/api/fetch_all");
        
-//         if (result.data.success) {
-//           setDoctors(result.data.data);
-//           console.log(doctors)
-//         } else {
-//           console.error('Error fetching doctors:', result.message);
-//         }
-//       } catch (error) {
-//         console.error('Error:', error);
-//       }
-//       fetchDoctors();
-//     }
-//   }
-// )
+        if (result.data.success) {
+          setDoctors(result.data.data);
+          console.log(doctors)
+        } else {
+          console.error('Error fetching doctors:', result.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+      fetchDoctors();
+    }
+  }
+)
     return <>
         <div className="w-full">
           <div className="w-11/12 mx-auto items-center flex lg:flex-row flex-col-reverse mt-16 gap-4 justify-between">
              <div className="lg:w-2/3 flex flex-col">
-             <TextButton heading={"Providing Quality Healthcare for a Brighter and Healthy Future"} 
-             subheading={"Managing a clinic shouldn’t mean managing chaos. Our platform empowers doctors with an intuitive, efficient, and secure solution to schedule appointments, reduce no-shows, and focus more on what matters most — patient care. With real-time updates, automated reminders, and easy calendar access, you stay in control of your day, effortlessly. Let us handle the scheduling, so you can handle the healing."}/>
+             <TextButton heading={"Smarter Scheduling,Better Care,More Time for Patients, Less Time on Paperwork"} 
+             subheading={"Simplify your practice with smart appointment scheduling. Our platform helps doctors manage bookings, reduce no-shows, and stay organized — so you can focus more on patient care and less on paperwork."}/>
               <div className='flex flex-row mt-10 gap-6'>
-            <Button text={"Appointments"} bg={true}/>
+            <Button text={"Manage Appointments"} bg={true}/>
             <Button text={"Watch Video"} video={true}/>
         </div>
              </div>
-             <div className="lg:relative lg:w-1/3 items-center flex flex-col">
-            <img className="lg:absolute top-10  lg:h-[90%] lg:w-[70%] h-[70%] w-[60%]" src={doctor}/>
-            <img className="lg:object-cover hidden lg:block"  src={back}/>
+             <div className=" lg:w-1/3 items-center flex flex-col">
+            <img className="top-10 " src={doctor}/>
              </div>
           </div>
           <div className="w-11/12 mx-auto">
@@ -70,22 +71,18 @@ const Home=()=>{
               }
               </div>
             </div>
-            <div className="flex lg:flex-row flex-col mt-32 items-center lg:gap-6 gap-10">
-            <div>
-              <TextButton heading={"You have lots of reasons to choose us"}
-                subheading={"Lorem ipsum dolor sit amet consectetur adipiscing eli mattis sit phasellus mollis sit aliquam sit nullam."}
-              />
-                <div className='flex flex-row mt-10 gap-6'>
-              <Button text={"Get Started"} bg={true}/>
-              <Button text={"Talk To Sales"}/>
-              </div>
-            </div>
-            <img className="lg:w-[40%] rounded-full h-[40%]" src={container}/>
-            </div>
+            {/* //changes */}
+            <NavLink className="flex lg:flex-row flex-col mt-32 justify-between items-center gap-6">
+             {dochome.map((ele,id)=>(
+                <div key={id} className="bg-gray-200 rounded-2xl text-[#007E85]">
+                <Dochome logo={ele.logo} heading={ele.heading} subheading={ele.subheading}/>
+                </div>
+             ))}
+            </NavLink>
             <div className="flex flex-col text-center mt-24">
               <TextButton heading={"Services we provide"} subheading={"Lorem ipsum dolor sit amet consectetur adipiscing elit semper dalar elementum tempus hac tellus libero accumsan. "}/>
             </div>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 grid-rows-2 gap-8 mt-16">
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1  gap-8 mt-16">
               {services.map((ele,id)=>(
                 <div key={id} className="bg-gray-200 rounded-3xl p-6">
                   <img className="" src={ele.src}/>
@@ -103,7 +100,7 @@ const Home=()=>{
               ))}
             </div>
             <div className="flex flex-col gap-6 items-center mt-28">
-              <p  className="lg:text-4xl md:text-3xl text-2xl  text-[#007E84] font-semibold">Trusted by 10,000+ companies around the world</p>
+              <p  className="lg:text-4xl text-3xl text-[#007E84] font-semibold">Trusted by 10,000+ companies around the world</p>
               <div className="flex flex-row gap-4 mt-8 justify-between lg:text-5xl text-3xl w-full">
                <FcGoogle/>
                <FaFacebook/>

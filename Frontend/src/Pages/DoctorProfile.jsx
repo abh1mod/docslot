@@ -6,6 +6,8 @@ import { FaArrowCircleUp } from "react-icons/fa";
 import { useAuth } from "../ContextAPI/AuthContext";
 import LoginDoc from "./LoginPages/LoginDoc";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 
 function DoctorProfile(){
   const {user, isLogin} = useAuth();
@@ -73,7 +75,7 @@ function DoctorProfile(){
             }
         }
     //fetch only doctor information
-    useEffect(()=>{
+    // useEffect(()=>{
         fetchProfile();
 
     },[user?.doc_id, isLogin]);
@@ -99,14 +101,35 @@ const count=upcomingAppointments.filter((item)=>{
         try{
             const res = await axios.post("http://localhost:3000/api/doctor/logout");
             if(res.data.success){
-                alert(res.data.message);
-                navigate("/");
-                window.location.reload(true);
+                toast.success("Logout Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
+                navigate("/doc_home");
+               
             }else{
-                alert(res.data.message);
+                 toast.error("Error while Logout!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             }
         }catch(error){
-            console.log(error);
+            toast.error("Error while Action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
         }
     }
 

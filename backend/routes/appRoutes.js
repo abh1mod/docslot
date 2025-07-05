@@ -9,7 +9,6 @@ import dotenv from "dotenv";
 import {auth, isPatient, isDoctor } from '../middleware/auth.js';
 dotenv.config();
 
-
 router.get("/my_profile", async (req, res) => {
   try {
     const token = req.cookies.token;
@@ -370,7 +369,7 @@ router.post('/patient/login', async(req, res)=>{
         
 
     }catch(error){
-        console.log("Internal Server Error");
+        console.log(error);
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 

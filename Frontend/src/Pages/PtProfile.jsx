@@ -3,9 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import PtProfileEdit from "./PtProfileEdit";
 import RemoveIcon from "../assets/remove.png";
-import { useAuth } from "../ContextAPI/AuthContext";
+import { useContext } from "react";
+import { useAuth,AuthContext } from "../ContextAPI/AuthContext";
 import { useNavigate } from "react-router-dom";
 import LoginPt from "./LoginPages/LoginPt";
+import { toast } from 'react-toastify';
+
 
 function ConfirmDelete({onConfirm,onCancel}){
     return (<div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50" >
@@ -28,6 +31,7 @@ function ConfirmDelete({onConfirm,onCancel}){
 }
 
 function PtProfile(){
+     const {role,setIsLogin,setUser}=useContext(AuthContext);
     const {user,isLogin} = useAuth();
     // const [pt_profile , setPatient] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
@@ -79,12 +83,35 @@ function PtProfile(){
         try{
             const res = await axios.delete(`http://localhost:3000/api/delete_apt/${apt_id}`);
             if(res.data.success){
-                console.log("Appointment Deleted Successfully",res.data.data);
+                 toast.success("Appointment deleted Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 fetchSlot();
             }
-            else console.log("Error in Deleting Appointment")
+            else{
+                 toast.error("Appointment deletion failed!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
+            }
         }catch(error){
-            console.log("Error in deleting Appointment",error);
+            toast.error("Error While Action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
         }
     }
 
@@ -92,9 +119,20 @@ function PtProfile(){
         try{
             const res = await axios.post("http://localhost:3000/api/patient/logout");
             if(res.data.success){
-                alert(res.data.message);
-                navigate("/");
-                window.location.reload(true);
+                 toast.success("Logout Successfully!",{
+                                  autoClose: 2000,
+                                 hideProgressBar: false,
+                                 closeOnClick: true,
+                                 pauseOnHover: true,
+                                 draggable: true,
+                
+                                })
+                setIsLogin(false);
+                setUser(null);
+                console.log(role)
+                {role=="doctor" || user?.role==="doctor" ?  navigate("/doc_home") : navigate("/home")}
+                // navigate("/");
+                // window.location.reload(true);
             }else{
                 alert(res.data.message);
             }
