@@ -4,6 +4,7 @@ import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/img.jpg'; // Adjust the path as needed
 import { useAuth } from '../../ContextAPI/AuthContext';
+import { toast } from 'react-toastify';
 
 const LoginDoc = () => {
   const {fetchUser} = useAuth();
@@ -47,16 +48,37 @@ const LoginDoc = () => {
             const res = await axios.post('http://localhost:3000/api/doctor/login', { email:user.email, password:user.password });
             console.log(res.data.success);
             if (res.data.success) {
-                alert("Login successful");
+              toast.success("Login Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 console.log("Login successful");
                 fetchUser();
                 navigate("/doc_profile");
             } else {
-                console.log("Error in Logging in");
+               toast.error("Login unSuccessfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 console.error(res.data.message);
             }
         } catch (error) {
-            alert(error.response.data.message);
+           toast.error("Error while action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             console.error(error.response.data.message);
         }
     };
@@ -66,15 +88,36 @@ const LoginDoc = () => {
         try {
             const res = await axios.post('http://localhost:3000/api/doctor/forgot_password', { email:user.email });
             if (res.data.success) {
-              alert(res.data.message);
+             toast.success("OTP send Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
               setOtpSent(true);
 
             } else {
-              alert(res.data.message);
+              toast.error("OTP send failed!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             
             }
         } catch (error) {
-            alert(error.response.data.message);
+            toast.error("Error while action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             console.error(error.response.data.message);
 
         }
@@ -85,14 +128,35 @@ const LoginDoc = () => {
       try{
          const res = await axios.post('http://localhost:3000/api/doctor/reset_password', { email:user.email, otpEntered:otp, newPassword : user.newPassword });
          if(res.data.success){
-          alert("Password Reset Successfully Proceed For Login");
+         toast.success("Password reset Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
           window.location.reload(false);
          }
          else{
-            alert(res.data.message)
+            toast.error("Password reset failed!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
          }
       } catch(error){
-        alert(error.response.data.message);
+        toast.error("Error while action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
       }
      
     }

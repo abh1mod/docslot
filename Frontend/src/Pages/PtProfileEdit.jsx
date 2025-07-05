@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function PtProfileEdit({pt_profile, setIsEditing}) {
     const [pt_name, setPtName] = useState(pt_profile.name);
@@ -17,26 +18,61 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
         try {
             const res = await axios.put(`http://localhost:3000/api/pt_update/${pt_id}`, {pt_name,gender,dob,phone,email});
             if(res.data.success){
-                console.log("Profile Updated Successfully",res.data.data);
+                //  toast.success("Profile Updated Successfully!",{
+                //   autoClose: 2000,
+                //  hideProgressBar: false,
+                //  closeOnClick: true,
+                //  pauseOnHover: true,
+                //  draggable: true,
+
+                // })
                 setIsEditing(false);
                 handleLogout();
             }
         } catch (error) {
-            console.error("Error updating profile:", error);
+              toast.error("Profile Updated failed!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
         }
     }
         const handleLogout = async() =>{
         try{
             const res = await axios.post("http://localhost:3000/api/patient/logout");
             if(res.data.success){
-                alert("Profile Updated Successfully! Please Log In Again");
+                 toast.success("Profile Updated successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 navigate("/");
-                window.location.reload(true);
+                // window.location.reload(true);
             }else{
-                alert(res.data.message);
+               toast.error("Profile Updation failed!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             }
         }catch(error){
-            console.log(error);
+             toast.error("Error While action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
         }
     }
 

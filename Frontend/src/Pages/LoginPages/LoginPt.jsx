@@ -4,6 +4,7 @@ import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/patient2.jpg'; // Adjust the path as needed
 import { useAuth } from '../../ContextAPI/AuthContext';
+import { toast } from 'react-toastify';
 
 axios.defaults.withCredentials = true;
 
@@ -49,14 +50,28 @@ const LoginPt = () => {
             const res = await axios.post('http://localhost:3000/api/patient/login', { email:user.email, password:user.password });
             console.log(res.data.success);
             if (res.data.success) {
-                alert("Login successful");
-                console.log("Login successful");
+                toast.success("Login Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 fetchUser();
                 
             } else {
-                console.log("Error in Logging in");
+                toast.error("Error while Login!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 console.error(res.data.message);
             }
+
         } catch (error) {
             alert(error.response.data.message);
             console.error(error.response.data.message);
@@ -68,15 +83,36 @@ const LoginPt = () => {
         try {
             const res = await axios.post('http://localhost:3000/api/patient/forgot_password', { email:user.email });
             if (res.data.success) {
-              alert(res.data.message);
+               toast.success("OTP send Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
               setOtpSent(true);
 
             } else {
-              alert(res.data.message);
+               toast.error("Sending Otp fail!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             
             }
         } catch (error) {
-            alert(error.response.data.message);
+             toast.error("Error While Action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             console.error(error.response.data.message);
 
         }
@@ -87,14 +123,35 @@ const LoginPt = () => {
       try{
          const res = await axios.post('http://localhost:3000/api/patient/reset_password', { email:user.email, otpEntered:otp, newPassword : user.newPassword },{withCredentials: true});
          if(res.data.success){
-            alert("Password Reset Successfully Proceed For Login");
+             toast.success("Password Reset Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             window.location.reload(false);
          }
          else{
-            alert(res.data.message)
+             toast.error("Password Reset failed!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
          }
       } catch(error){
-        alert(error.response.data.message);
+        toast.error("Error while Action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
       }
      
     }

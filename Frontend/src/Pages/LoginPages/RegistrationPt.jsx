@@ -3,6 +3,7 @@ import PtImg from "../../assets/patient.jpg";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const RegistrationPt = () => {
 
@@ -46,13 +47,35 @@ const RegistrationPt = () => {
             const res = await axios.post('http://localhost:3000/api/patient/send_otp', { pt_name:user.pt_name, email:user.email});
             console.log(res.data.success);
             if (res.data.success) {
+                 toast.success("OTP send Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 setOtpSent(true);
             } else {
-                console.log("Error in sending OTP");
+                   toast.error("Error while sending OTP!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 console.error(res.data.message);
             }
         } catch (error) {
-            alert(error.response.data.message);
+               toast.error("Error while Action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             console.error(error.response.data.message);
             
         }
@@ -63,14 +86,35 @@ const RegistrationPt = () => {
         try {
             const res = await axios.post('http://localhost:3000/api/patient/verify_email', { otpEntered:otp, email:user.email, password:user.password, pt_name:user.pt_name });
             if (res.data.success) {
-                alert("Registration successful Proceed For Login");
+                   toast.success("Successfully Singup!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 navigate("/login_pt")
             } else {
-              alert(res.data.message);
+                 toast.error("Failed to singup!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             
             }
         } catch (error) {
-            alert(error.response.data.message);
+               toast.error("Error while Action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             console.error(error.response.data.message);
 
         }
