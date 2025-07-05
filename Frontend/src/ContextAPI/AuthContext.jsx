@@ -4,6 +4,8 @@ import axios from "axios";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+    
+    const [role,setRole]=useState("");
     const [isLogin, setIsLogin] = useState(false);
     const [user, setUser] = useState(null);
     const fetchUser = async () => {
@@ -49,7 +51,7 @@ const AuthProvider = ({ children }) => {
 
 
   return (
-    <AuthContext.Provider value={{ isLogin, setIsLogin, user, setUser, fetchUser}}>
+    <AuthContext.Provider value={{ isLogin, setIsLogin, user, setUser, fetchUser,role,setRole}}>
       {children}
     </AuthContext.Provider>
   );
@@ -57,4 +59,4 @@ const AuthProvider = ({ children }) => {
 
 const useAuth = () => useContext(AuthContext);
 
-export {useAuth, AuthProvider };
+export {useAuth, AuthProvider,AuthContext };

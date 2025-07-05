@@ -8,6 +8,7 @@ import LoginPt from "./LoginPages/LoginPt.jsx";
 import RegistrationPt from "./LoginPages/RegistrationPt.jsx";
 import { useAuth } from "../ContextAPI/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 function BookingPortal() {
     const { doc_id } = useParams();
@@ -72,13 +73,36 @@ function BookingPortal() {
             console.log(start_time, date);
             const res = await axios.post(`http://localhost:3000/api/book_appointment/${doc_id}/${user.pt_id}`, {start_time,date,remarks});
             if(res.data.success){
-                alert(res.data.message);
+                 toast.success("Booking Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
                 navigate("/");
             }
-            else console.log("Error From try Block appointment booking")
+            else {
+                 toast.error("Error while booking!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
+            }
         }
         catch(error){
-            console.log("Error from Catch Block", error);
+            toast.error("Error while action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
         }
     }
 

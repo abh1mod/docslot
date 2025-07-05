@@ -9,7 +9,6 @@ import dotenv from "dotenv";
 import {auth, isPatient, isDoctor } from '../middleware/auth.js';
 dotenv.config();
 
-
 router.get("/my_profile", async (req, res) => {
   try {
     const token = req.cookies.token;

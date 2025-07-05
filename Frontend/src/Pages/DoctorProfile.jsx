@@ -6,6 +6,8 @@ import { FaArrowCircleUp } from "react-icons/fa";
 import { useAuth } from "../ContextAPI/AuthContext";
 import LoginDoc from "./LoginPages/LoginDoc";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 
 function DoctorProfile(){
   const {user, isLogin} = useAuth();
@@ -21,6 +23,12 @@ function DoctorProfile(){
   //for past appointment and we also use above useState
   const[open,setopen]=useState(false);
 
+  const[edit,setEdit]=useState(false);
+
+
+  // const[updatedata,setUpdatedata]=useState({
+
+  // });
 //use to fetch data form api for respective doc appointment
     useEffect(()=>{
         const fetchProfiledata = async()=>{
@@ -29,6 +37,7 @@ function DoctorProfile(){
               const res = await axios.get(`http://localhost:3000/api/my_day/${user?.doc_id}`);
               if(res.data.success){
                 fetchData(res.data.data);
+               
               }
               else{
                 console.log("Error from try Block");
@@ -53,6 +62,7 @@ function DoctorProfile(){
               const res = await axios.get(`http://localhost:3000/api/doc_profile/${user?.doc_id}`);
               if(res.data.success){
                 setDoctor(res.data.data);
+                //  localStorage.setItem("user",JSON.stringify(res.data.data));
               }
               else{
                 console.log("Error from try Block");
@@ -62,6 +72,8 @@ function DoctorProfile(){
 
             }
         }
+    //fetch only doctor information
+    // useEffect(()=>{
         fetchProfile();
 
     },[user?.doc_id, isLogin]);
@@ -87,22 +99,44 @@ const count=upcomingAppointments.filter((item)=>{
         try{
             const res = await axios.post("http://localhost:3000/api/doctor/logout");
             if(res.data.success){
-                alert(res.data.message);
-                navigate("/");
-                window.location.reload(true);
+                toast.success("Logout Successfully!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
+                navigate("/doc_home");
+               
             }else{
-                alert(res.data.message);
+                 toast.error("Error while Logout!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
             }
         }catch(error){
-            console.log(error);
+            toast.error("Error while Action!",{
+                  autoClose: 2000,
+                 hideProgressBar: false,
+                 closeOnClick: true,
+                 pauseOnHover: true,
+                 draggable: true,
+
+                })
         }
     }
 
 
   if(!isLogin) return <LoginDoc/>
 //simple html+tailwind
-    return <div className="bg-gray-100 min-h-screen flex flex-col items-center ">
-  <div className="bg-white shadow-lg rounded-xl flex flex-col md:flex-row w-full max-w-4xl min-h-[520px] mt-5 ">
+return <>
+  <div className="bg-gray-100 min-h-screen flex flex-col items-center ">
+  <div className="bg-white shadow-lg rounded-xl flex flex-col md:flex-row w-full max-w-4xl">
    
     <div className="p-6 md:w-1/3 flex flex-col items-center border-b md:border-b-0 md:border-r border-gray-200">
       <img src={user?.image} alt="Doctor profile" className="rounded-full w-[145px] h-[145px] object-cover mb-4 mt-6" />
@@ -113,7 +147,10 @@ const count=upcomingAppointments.filter((item)=>{
         <p><i className="fas fa-envelope mr-2"></i>{user?.email}</p>
         <p><i className="fas fa-map-marker-alt mr-2"></i>Boston, MA</p>
       </div>
+       <button onClick={()=>setEdit(true)} className="hover:bg-gray-300 transition-all ease-in-out w-[6rem] h-[2.5rem] ml-16 mb-2 rounded-xl bg-gray-200 font-semibold text-gray-700 p-1">Edit Profile</button>
     </div>
+
+   {edit && <EditDoctor doctor={doctor} setDoctor={setDoctor} closeModal={handleclose} />}
 
  
     <div className="flex-1 p-6" >
@@ -145,7 +182,7 @@ const count=upcomingAppointments.filter((item)=>{
 
       //it can be implement in two ways here is one in backtick `` so that accordian can have 
       //transition be applied here on max-height class max-height apply on basis of isopen
-  className={`overflow-hidden transition-max-height duration-500 ease-in-out ${
+  className={`overflow-hidden transition-all duration-500 ease-in-out ${
     isopen ? 'max-h-96' : 'max-h-0'
   }`}>
   <div className="p-4 bg-gray-200">
@@ -162,9 +199,9 @@ const count=upcomingAppointments.filter((item)=>{
       {/*showing rows using map function*/}
         {upcomingAppointments.map((item,index) => (
           <tr key={index}>
-            <td className="px-2 py-1 border">{item.name}</td>
-            <td className="px-2 py-1 border"> {item.date.substring(0, 10)}</td>
-            <td className="px-2 py-1 border">{item.start_time.slice(0,5)}</td>
+            <td className="px-2 py-1 border">{item.name || 'N/A'}</td>
+            <td className="px-2 py-1 border"> {item.date.substring(0, 10) || 'N/A'}</td>
+            <td className="px-2 py-1 border"> {(item?.start_time?.slice(0, 5) || '') }</td>
             {/* <td className="px-2 py-1 border">{item.end_time}</td> */}
           </tr>
         ))}
@@ -200,9 +237,9 @@ const count=upcomingAppointments.filter((item)=>{
       <tbody>
         {PastAppointments.map((item,index) => (
           <tr key={index}>
-            <td className="px-2 py-1 border">{item.name}</td>
-            <td className="px-2 py-1 border"> {item.date.substring(0, 10)}</td>
-            <td className="px-2 py-1 border">{item.start_time.slice(0,5)}</td>
+            <td className="px-2 py-1 border">{item.name || 'N/A'}</td>
+            <td className="px-2 py-1 border"> {item.date.substring(0, 10) || 'N/A'}</td>
+            <td className="px-2 py-1 border"> {(item?.start_time?.slice(0, 5) || '')}</td>
             {/* <td className="px-2 py-1 border">{item.end_time}</td> */}
           </tr>
         ))}
@@ -217,9 +254,7 @@ const count=upcomingAppointments.filter((item)=>{
     </div>
   </div>
 </div>
-
-
-
+</>
 }
 export default DoctorProfile;
 
