@@ -8,14 +8,11 @@ import LoginDoc from "./LoginPages/LoginDoc";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 
-
 function DoctorProfile(){
-  const {user, isLogin} = useAuth();
+  const {user, isLogin, setIsLogin} = useAuth();
   const navigate = useNavigate();
   //getting current date
   const today = new Date().toISOString().slice(0, 10); 
-
-
 
   // const{doc_id} = useParams();
   //logic for Accordion
@@ -109,6 +106,7 @@ const count=upcomingAppointments.filter((item)=>{
                  draggable: true,
 
                 })
+                setIsLogin(false);
                 navigate("/doc_home");
                
             }else{

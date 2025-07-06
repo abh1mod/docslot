@@ -31,7 +31,7 @@ function ConfirmDelete({onConfirm,onCancel}){
 }
 
 function PtProfile(){
-     const {role,setIsLogin,setUser}=useContext(AuthContext);
+    const {role,setIsLogin,setUser}=useContext(AuthContext);
     const {user,isLogin} = useAuth();
     // const [pt_profile , setPatient] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
@@ -84,7 +84,7 @@ function PtProfile(){
             const res = await axios.delete(`http://localhost:3000/api/delete_apt/${apt_id}`);
             if(res.data.success){
                  toast.success("Appointment deleted Successfully!",{
-                  autoClose: 2000,
+                    autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
                  pauseOnHover: true,
@@ -120,7 +120,7 @@ function PtProfile(){
             const res = await axios.post("http://localhost:3000/api/patient/logout");
             if(res.data.success){
                  toast.success("Logout Successfully!",{
-                                  autoClose: 2000,
+                                autoClose: 2000,
                                  hideProgressBar: false,
                                  closeOnClick: true,
                                  pauseOnHover: true,

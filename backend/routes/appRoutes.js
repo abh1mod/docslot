@@ -336,10 +336,10 @@ router.post('/patient/login', async(req, res)=>{
         if(user.length === 0){
             return res.status(404).json({success:false, message:"User Does Not Exist"});
         }
-        if(await bcrypt.compare(password, user[0].hashedpassword) == false){
+        if(await bcrypt.compare(password, user[0].hashedpassword) === false){    
             return res.status(401).json({success:false, message:"Please Check Your Password"});
         }
-        user[0].hashedpassword = undefined;
+        // user[0].hashedpassword = undefined;
 
         const token = jwt.sign({ 
             pt_id: user[0].pt_id,

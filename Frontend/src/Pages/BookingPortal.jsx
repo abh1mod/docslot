@@ -81,7 +81,7 @@ function BookingPortal() {
                  draggable: true,
 
                 })
-                navigate("/");
+                navigate("/pt_profile");
             }
             else {
                  toast.error("Error while booking!",{
