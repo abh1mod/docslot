@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import  {AuthContext}  from '../ContextApi/AuthContext';
 
 const ProfileSelection = ({ onSelect }) => {
-  const {role,setRole}=useContext(AuthContext);
+  const {role,setRole} = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const handlePatientClick = () => {
 };
 
 
-  return (
+  return (  
     <div className="relative flex justify-between min-w-full max-w-full text-blue-800 font-bold text-[30px]">
       <button
         className="w-1/2 min-h-[100vh] relative overflow-hidden group"
