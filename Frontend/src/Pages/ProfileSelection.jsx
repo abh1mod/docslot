@@ -9,14 +9,14 @@ const ProfileSelection = ({ onSelect }) => {
   const handleDoctorClick = () => {
   onSelect();
   setRole("doctor");
-  sessionStorage.setItem("role", "doctor");
+  localStorage.setItem("role", "doctor");
   navigate("/doc_home");
 };
 
 const handlePatientClick = () => {
   onSelect();
   setRole("patient");
-  sessionStorage.setItem("role", "patient");
+  localStorage.setItem("role", "patient");
   navigate("/home");
 };
 
