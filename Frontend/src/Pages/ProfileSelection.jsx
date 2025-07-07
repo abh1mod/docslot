@@ -5,9 +5,7 @@ import  {AuthContext}  from '../ContextApi/AuthContext';
 
 const ProfileSelection = ({ onSelect }) => {
   const {role,setRole} = useContext(AuthContext);
-
   const navigate = useNavigate();
-
   const handleDoctorClick = () => {
   onSelect();
   setRole("doctor");
@@ -21,7 +19,6 @@ const handlePatientClick = () => {
   sessionStorage.setItem("role", "patient");
   navigate("/home");
 };
-
 
   return (  
     <div className="relative flex justify-between min-w-full max-w-full text-blue-800 font-bold text-[30px]">
