@@ -22,24 +22,37 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
-  const {isLogin}=useContext(AuthContext);
+  const { isLogin } = useContext(AuthContext);
   const [profileSelected, setProfileSelected] = useState(false);
+  const [userRole, setUserRole] = useState(null); // store actual role value
 
   useEffect(() => {
-    const role = sessionStorage.getItem("role");
+    const role = localStorage.getItem("role");
     if (role) {
       setProfileSelected(true);
+      setUserRole(role); // save role for later routing
     }
   }, []);
 
   return (
     <BrowserRouter>
-     <ToastContainer position="top-right" autoClose={3000} />
-      {(!profileSelected && !isLogin)? (
-        <ProfileSelection onSelect={() => setProfileSelected(true)} />
+      <ToastContainer position="top-right" autoClose={3000} />
+
+      {(!profileSelected && !isLogin) ? (
+        <ProfileSelection onSelect={() => {
+          setProfileSelected(true);
+          const savedRole = localStorage.getItem("role");
+          if (savedRole) setUserRole(savedRole);
+        }} />
       ) : (
         <Routes>
           <Route path="/" element={<Layout />}>
+            
+            <Route
+              index
+              element={<Navigate to={userRole === "doctor" ? "/doc_home" : "/home"} />}
+            />
+
             <Route path="home" element={<Home />} />
             <Route path="doc_home" element={<Dochome />} />
             <Route path="about" element={<About />} />
@@ -54,11 +67,13 @@ function App() {
             <Route path="pt_edit/:pt_id" element={<PtProfileEdit />} />
             <Route path="*" element={<Error />} />
           </Route>
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       )}
     </BrowserRouter>
   );
 }
+
 
 export default App;
