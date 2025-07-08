@@ -75,7 +75,7 @@ router.post('/doctor/send_otp', async(req, res) => {
             });
         }    
         const otpSent = Math.floor(100000 + Math.random()*900000).toString();
-        await redisClient.setEx(`otp:${email}`, 300,  otpSent); 
+        await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
 
         sendmail({to: email, subject: 'Verification Code', html: `
                     <div>
@@ -204,7 +204,7 @@ router.post('/doctor/forgot_password', async (req, res) => {
         }
 
         const otpSent = Math.floor(100000 + Math.random() * 900000).toString();
-        await redisClient.setEx(`otp:${email}`, 300, otpSent);
+        await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
 
         sendmail({ to: email, subject: 'Password Reset OTP', html: `
                     <div>
@@ -233,7 +233,7 @@ router.post('/doctor/reset_password', async (req, res) => {
         if (!storedOtp) {
             return res.status(410).json({ success: false, message: "OTP expired. Please request again." });
         }
-        if (storedOtp !== otpEntered) {
+        if (storedOtp != otpEntered) {
             console.log("Incorrect OTP. Please try again.");
             return res.status(400).json({ success: false, message: "Enter Correct OTP" });
         }
@@ -268,7 +268,7 @@ router.post('/patient/send_otp', async(req, res) => {
             });
         }    
         const otpSent = Math.floor(100000 + Math.random()*900000).toString();
-        await redisClient.setEx(`otp:${email}`, 300,  otpSent); 
+        await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
 
         sendmail({to: email, subject: 'Verification Code', html: `
                     <div>
@@ -398,7 +398,7 @@ router.post('/patient/forgot_password', async(req,res)=>{
         }
 
         const otpSent = Math.floor(100000 + Math.random() * 900000).toString();
-        await redisClient.setEx(`otp:${email}`, 300, otpSent);
+        await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
 
         sendmail({ to: email, subject: 'Password Reset OTP', html: `
                     <div>
@@ -427,7 +427,7 @@ router.post('/patient/reset_password', async (req, res) => {
         if (!storedOtp) {
             return res.status(410).json({ success: false, message: "OTP expired. Please request again." });
         }
-        if (storedOtp !== otpEntered) {
+        if (storedOtp != otpEntered) {
             console.log("Incorrect OTP. Please try again.");
             return res.status(400).json({ success: false, message: "Enter Correct OTP" });
         }
