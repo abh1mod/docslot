@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useAuth } from '../ContextApi/AuthContext';
+import { useAuth } from '../ContextAPI/AuthContext';
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 

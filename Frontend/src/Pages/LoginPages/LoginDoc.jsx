@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import "./Registration.css"
 import PtImg from '../../assets/img.jpg'; // Adjust the path as needed
-import { useAuth } from '../../ContextApi/AuthContext';
+import { useAuth } from '../../ContextAPI/AuthContext';
 import { toast } from 'react-toastify';
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";

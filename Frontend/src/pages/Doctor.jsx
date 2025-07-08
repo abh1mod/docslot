@@ -3,7 +3,7 @@ import DocCard from "./DocCard";
 import Loading from "./Loading";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../ContextApi/AuthContext";
+import { useAuth } from "../ContextAPI/AuthContext";
 import LoginPt from "./LoginPages/LoginPt";
 import { useNavigate } from "react-router-dom";
 

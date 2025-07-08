@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaArrowAltCircleDown } from "react-icons/fa"
 import { FaArrowCircleUp } from "react-icons/fa";
-import { useAuth } from "../ContextApi/AuthContext";
+import { useAuth } from "../ContextAPI/AuthContext";
 import LoginDoc from "./LoginPages/LoginDoc";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';

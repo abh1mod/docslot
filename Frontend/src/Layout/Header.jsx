@@ -1,8 +1,8 @@
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import './Header.css';
 import { useState, useEffect, useContext } from "react";
-import { Userdata } from "../ContextApi/Context";
-import { AuthContext } from "../ContextApi/AuthContext";
+import { Userdata } from "../ContextAPI/Context";
+import { AuthContext } from "../ContextAPI/AuthContext";
 import axios from "axios";
 import { toast } from 'react-toastify';
 

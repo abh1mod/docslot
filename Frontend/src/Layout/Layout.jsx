@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import './Layout.css'
 import { useNavigate } from "react-router-dom";
 import Loading from "../pages/Loading";
-import Provider from "../ContextApi/Context"
+import Provider from "../ContextAPI/Context"
 function Layout(){
     const Navigate=useNavigate();
    

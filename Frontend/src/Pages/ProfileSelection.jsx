@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import logo from '../assets/logo.png';
 import { useContext } from 'react';
-import  {AuthContext}  from '../ContextApi/AuthContext';
+import  {AuthContext}  from '../ContextAPI/AuthContext';
 
 const ProfileSelection = ({ onSelect }) => {
   const {role,setRole} = useContext(AuthContext);

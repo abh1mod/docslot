@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { Userdata } from "../ContextApi/Context"; 
+import { Userdata } from "../ContextAPI/Context"; 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 const { loged, logout ,setLoged} = useContext(Userdata);
