@@ -1,5 +1,5 @@
 import eyeCare from "../assets/services/Container (4).png";
-import dental from "../assets/services/container.png";
+import dental from "../assets/services/Container.png";
 import bones from "../assets/services/Image Placeholder.png";
 import diagnosis from "../assets/services/Container (1).png";
 import cardio from "../assets/services/Container (2).png";
