@@ -5,8 +5,8 @@ import axios from "axios";
 import "./LoginPages/Registration.css";
 import { Link } from "react-router-dom";
 import LoginPt from "./LoginPages/LoginPt.jsx";
-import RegistrationPt from "./LoginPages/RegistrationPt.jsx";
-import { useAuth } from "../ContextAPI/AuthContext.jsx";
+// import RegistrationPt from "./LoginPages/RegistrationPt.jsx";
+import { useAuth } from "../ContextApi/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 

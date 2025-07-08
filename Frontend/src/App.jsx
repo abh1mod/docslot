@@ -9,14 +9,14 @@ import Doctor from './Pages/Doctor';
 import RegistrationDoc from './pages/LoginPages/RegistrationDoc';
 import LoginDoc from './pages/LoginPages/LoginDoc';
 import RegistrationPt from './pages/LoginPages/RegistrationPt';
-import LoginPt from './pages/LoginPages/LoginPt';
+import LoginPt from './Pages/LoginPages/LoginPt';
 import DoctorProfile from './pages/DoctorProfile';
-import PtProfileEdit from './pages/PtProfileEdit';
+import PtProfileEdit from './Pages/PtProfileEdit';
 import BookingPortal from './Pages/BookingPortal';
 import PtProfile from './Pages/PtProfile';
 import Dochome from './Pages/Dochome';
 import { useContext } from 'react';
-import { AuthContext } from './ContextAPI/AuthContext';
+import { AuthContext } from './ContextApi/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

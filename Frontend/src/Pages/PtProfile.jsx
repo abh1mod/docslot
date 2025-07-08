@@ -4,7 +4,7 @@ import axios from "axios";
 import PtProfileEdit from "./PtProfileEdit";
 import RemoveIcon from "../assets/remove.png";
 import { useContext } from "react";
-import { useAuth,AuthContext } from "../ContextAPI/AuthContext";
+import { useAuth,AuthContext } from "../ContextApi/AuthContext";
 import { useNavigate } from "react-router-dom";
 import LoginPt from "./LoginPages/LoginPt";
 import { toast } from 'react-toastify';
