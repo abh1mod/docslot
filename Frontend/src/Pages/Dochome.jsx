@@ -19,6 +19,9 @@ import { FaWebflow } from "react-icons/fa6";
 import { FaMicrosoft } from "react-icons/fa";
 import { dochome } from "../data/dochome";
 import Dochome from "../components/HomePage/Dochome";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 const Home=()=>{
 
@@ -27,8 +30,8 @@ const Home=()=>{
    useEffect(() => {    
     const fetchDoctors = async () => {
       try {
-        const result = await axios.get("http://localhost:3000/api/fetch_all");
-       
+        const result = await axios.get(`${BASE_URL}/api/fetch_all`);
+
         if (result.data.success) {
           setDoctors(result.data.data);
           console.log(doctors)

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"; // Import Link for navigation
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 const RegistrationDoc = () => {
 
   const [user, setUser] = useState({
@@ -43,7 +44,7 @@ const RegistrationDoc = () => {
     const handleSendOtp = async (event) => {
         event.preventDefault(); 
         try {
-            const res = await axios.post('http://localhost:3000/api/doctor/send_otp', { doc_name:user.doc_name, email:user.email});
+            const res = await axios.post(`${BASE_URL}/api/doctor/send_otp`, { doc_name:user.doc_name, email:user.email});
             console.log(res.data.success);
             if (res.data.success) {
                 setOtpSent(true);
@@ -61,7 +62,7 @@ const RegistrationDoc = () => {
         event.preventDefault();
 
         try {
-            const res = await axios.post('http://localhost:3000/api/doctor/verify_email', { otpEntered:otp, email:user.email, password:user.password, doc_name:user.doc_name });
+            const res = await axios.post(`${BASE_URL}/api/doctor/verify_email`, { otpEntered:otp, email:user.email, password:user.password, doc_name:user.doc_name });
             if (res.data.success) {
                 alert("Registration successful Proceed For Login");
                 navigate("/login_doc")

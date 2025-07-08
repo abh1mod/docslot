@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import RemoveIcon from "../assets/remove.png";
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
 function ConfirmDelete({onConfirm,onCancel}){
     return (<div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50" >
         <div>
@@ -56,7 +58,7 @@ function DoctorProfile(){
         const fetchProfiledata = async()=>{
           if(!user?.doc_id) return;
             try{
-              const res = await axios.get(`http://localhost:3000/api/my_day/${user?.doc_id}`);
+              const res = await axios.get(`${BASE_URL}/api/my_day/${user?.doc_id}`);
               if(res.data.success){
                 fetchData(res.data.data);
               }
@@ -80,7 +82,7 @@ function DoctorProfile(){
         const fetchProfile = async()=>{
           if(!user?.doc_id) return;
             try{
-              const res = await axios.get(`http://localhost:3000/api/doc_profile/${user?.doc_id}`);
+              const res = await axios.get(`${BASE_URL}/api/doc_profile/${user?.doc_id}`);
               if(res.data.success){
                 setDoctor(res.data.data);
                 //  localStorage.setItem("user",JSON.stringify(res.data.data));
@@ -118,7 +120,7 @@ const count=upcomingAppointments.filter((item)=>{
 
     const handleAptReject = async(apt_id) =>{
         try{
-            const res = await axios.patch(`http://localhost:3000/api/doctor/reject_apt/${apt_id}`);
+            const res = await axios.patch(`${BASE_URL}/api/doctor/reject_apt/${apt_id}`);
             if(res.data.success){
                 toast.success("Appointment Rejected Successfully!",{
                   autoClose: 2000,
@@ -152,7 +154,7 @@ const count=upcomingAppointments.filter((item)=>{
 
     const handleLogout = async() =>{
         try{
-            const res = await axios.post("http://localhost:3000/api/doctor/logout");
+            const res = await axios.post(`${BASE_URL}/api/doctor/logout`);
             if(res.data.success){
                 toast.success("Logout Successfully!",{
                   autoClose: 2000,

@@ -7,6 +7,8 @@ import { useAuth } from "../ContextAPI/AuthContext";
 import LoginPt from "./LoginPages/LoginPt";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
 const Doctor=()=>{
     const {isLogin, user} = useAuth();
     const [doctors, setDoctors] = useState([]);
@@ -15,8 +17,8 @@ const Doctor=()=>{
   useEffect(() => {    
     const fetchDoctors = async () => {
       try {
-        const result = await axios.get("http://localhost:3000/api/fetch_all");
-       
+        const result = await axios.get(`${BASE_URL}/api/fetch_all`);
+
         if (result.data.success) {
           setDoctors(result.data.data);
         } else {

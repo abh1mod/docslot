@@ -10,9 +10,13 @@ import cookieParser from "cookie-parser";
 import { sql } from "./config/db.js";
 dotenv.config();
 import axios from "axios"
+import path from "path";
+import { fileURLToPath } from 'url';
+
 
 const PORT = process.env.PORT || 3000;
 const app = express();
+const __dirname = path.resolve();
 
 
 app.use(cors({
@@ -22,7 +26,7 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.use(helmet());
+// app.use(helmet());
 app.use(morgan("dev"));//log requests
 app.use(express.json()); // use to parse incoming data 
 
@@ -31,6 +35,13 @@ app.use(express.json()); // use to parse incoming data
 
 
 app.use("/api",appRoutes);
+
+if(process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/Frontend/dist")));
+ app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
+  }); 
+}
 
 async function initDB(){
     try{
