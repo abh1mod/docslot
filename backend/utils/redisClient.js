@@ -1,12 +1,13 @@
-// redisClient.js
-import { createClient } from 'redis';
+import { Redis } from '@upstash/redis'
+import dotenv from 'dotenv';
 
-const redisClient = createClient({
-  url: 'redis://localhost:6379' // default port
-});
+dotenv.config();
+const redisClient = new Redis({
+  url: process.env.REDIS_URL,
+  token: process.env.REDIS_TOKEN,
+})
 
-redisClient.on('error', err => console.error('Redis Error:', err));
-
-await redisClient.connect(); // for ES Modules or top-level await
+await redisClient.set("foo", "bar");
+await redisClient.get("foo");
 
 export default redisClient;

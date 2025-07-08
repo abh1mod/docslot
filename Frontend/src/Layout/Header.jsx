@@ -6,6 +6,8 @@ import { AuthContext } from "../ContextApi/AuthContext";
 import axios from "axios";
 import { toast } from 'react-toastify';
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
 const Header = () => {
   const [navbarRole, setNavbarRole] = useState("");
 
@@ -32,12 +34,12 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.post("http://localhost:3000/api/patient/logout");
+      const res = await axios.post(`${BASE_URL}/api/patient/logout`);
       if (res.data.success) {
         alert(res.data.message);
         setIsLogin(false);
         setUser(null);
-        localStorage.removeItem("role");
+        // localStorage.removeItem("role");
 
         toast.success("Logout Successfully!", {
           autoClose: 2000,

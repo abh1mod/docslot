@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../ContextApi/AuthContext';
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
 function PtProfileEdit({pt_profile, setIsEditing}) {
     const {isLogin, setIsLogin} = useAuth();
     const [pt_name, setPtName] = useState(pt_profile.name);
@@ -18,7 +20,7 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
         e.preventDefault(); 
         console.log("Profile Details", pt_name, gender, dob, phone, email);
         try {
-            const res = await axios.put(`http://localhost:3000/api/pt_update/${pt_id}`, {pt_name,gender,dob,phone,email});
+            const res = await axios.put(`${BASE_URL}/api/pt_update/${pt_id}`, {pt_name,gender,dob,phone,email});
             if(res.data.success){
                 //  toast.success("Profile Updated Successfully!",{
                 //   autoClose: 2000,
@@ -44,7 +46,7 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
     }
         const handleLogout = async() =>{
         try{
-            const res = await axios.post("http://localhost:3000/api/patient/logout");
+            const res = await axios.post(`${BASE_URL}/api/patient/logout`);
             if(res.data.success){
                 // Put line before Please Login Again
                  toast.success( <>

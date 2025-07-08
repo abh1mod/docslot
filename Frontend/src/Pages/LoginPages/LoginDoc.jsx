@@ -6,6 +6,8 @@ import PtImg from '../../assets/img.jpg'; // Adjust the path as needed
 import { useAuth } from '../../ContextAPI/AuthContext';
 import { toast } from 'react-toastify';
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
 const LoginDoc = () => {
   const {fetchUser} = useAuth();
   const[ forgotPass, setForgotPass] = useState(false);
@@ -45,7 +47,7 @@ const LoginDoc = () => {
     const handleLogin = async (event) => {
         event.preventDefault(); 
         try {
-            const res = await axios.post('http://localhost:3000/api/doctor/login', { email:user.email, password:user.password });
+            const res = await axios.post(`${BASE_URL}/api/doctor/login`, { email:user.email, password:user.password });
             console.log(res.data.success);
             if (res.data.success) {
               toast.success("Login Successfully!",{
@@ -86,7 +88,7 @@ const LoginDoc = () => {
     const handleForgotPassword = async (event) => {
         event.preventDefault();
         try {
-            const res = await axios.post('http://localhost:3000/api/doctor/forgot_password', { email:user.email });
+            const res = await axios.post(`${BASE_URL}/api/doctor/forgot_password`, { email:user.email });
             if (res.data.success) {
              toast.success("OTP send Successfully!",{
                   autoClose: 2000,
@@ -126,7 +128,7 @@ const LoginDoc = () => {
     const handleResetPassword = async (event) => {
       event.preventDefault();
       try{
-         const res = await axios.post('http://localhost:3000/api/doctor/reset_password', { email:user.email, otpEntered:otp, newPassword : user.newPassword });
+         const res = await axios.post(`${BASE_URL}/api/doctor/reset_password`, { email:user.email, otpEntered:otp, newPassword : user.newPassword });
          if(res.data.success){
          toast.success("Password reset Successfully!",{
                   autoClose: 2000,

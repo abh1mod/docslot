@@ -5,6 +5,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
 const RegistrationPt = () => {
 
   const [user, setUser] = useState({
@@ -44,7 +46,7 @@ const RegistrationPt = () => {
     const handleSendOtp = async (event) => {
         event.preventDefault(); 
         try {
-            const res = await axios.post('http://localhost:3000/api/patient/send_otp', { pt_name:user.pt_name, email:user.email});
+            const res = await axios.post(`${BASE_URL}/api/patient/send_otp`, { pt_name:user.pt_name, email:user.email});
             console.log(res.data.success);
             if (res.data.success) {
                  toast.success("OTP send Successfully!",{
@@ -84,7 +86,7 @@ const RegistrationPt = () => {
         event.preventDefault();
 
         try {
-            const res = await axios.post('http://localhost:3000/api/patient/verify_email', { otpEntered:otp, email:user.email, password:user.password, pt_name:user.pt_name });
+            const res = await axios.post(`${BASE_URL}/api/patient/verify_email`, { otpEntered:otp, email:user.email, password:user.password, pt_name:user.pt_name });
             if (res.data.success) {
                    toast.success("Successfully Singup!",{
                   autoClose: 2000,

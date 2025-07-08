@@ -10,6 +10,8 @@ import { useAuth } from "../ContextAPI/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
 function BookingPortal() {
     const { doc_id } = useParams();
     const [doctor, fetchDoctor] = useState({});
@@ -29,7 +31,7 @@ function BookingPortal() {
             try{
                 if (!date) return;
                 console.log(aptDetails.date)
-                const res = await axios.get(`http://localhost:3000/api/busy_slots/${date}/${doc_id}`);
+                const res = await axios.get(`${BASE_URL}/api/busy_slots/${date}/${doc_id}`);
                 if(res.data.success){
                     setBusySlots(res.data.data);
                 }
@@ -52,7 +54,7 @@ function BookingPortal() {
     useEffect(()=>{
         const fetchProfile = async()=>{
             try{
-                const res = await axios.get(`http://localhost:3000/api/doc_profile/${doc_id}`);
+                const res = await axios.get(`${BASE_URL}/api/doc_profile/${doc_id}`);
                 if(res.data.success){
                     fetchDoctor(res.data.data);
                 }
@@ -71,7 +73,7 @@ function BookingPortal() {
         event.preventDefault();
         try{
             console.log(start_time, date);
-            const res = await axios.post(`http://localhost:3000/api/book_appointment/${doc_id}/${user.pt_id}`, {start_time,date,remarks});
+            const res = await axios.post(`${BASE_URL}/api/book_appointment/${doc_id}/${user.pt_id}`, {start_time,date,remarks});
             if(res.data.success){
                  toast.success("Booking Successfully!",{
                   autoClose: 2000,

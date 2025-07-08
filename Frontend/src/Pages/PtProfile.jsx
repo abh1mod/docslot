@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import LoginPt from "./LoginPages/LoginPt";
 import { toast } from 'react-toastify';
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 function ConfirmDelete({onConfirm,onCancel}){
     return (<div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50" >
@@ -64,7 +65,7 @@ function PtProfile(){
     const fetchSlot = async()=>{
         if (!user?.pt_id) return;
             try{
-                const res = await axios.get(`http://localhost:3000/api/pt_slot/${user?.pt_id}`);
+                const res = await axios.get(`${BASE_URL}/api/pt_slot/${user?.pt_id}`);
                 if(res.data.success){
                     setSlot(res.data.data);  
                     setSlotSize(res.data.data.length);
@@ -82,7 +83,7 @@ function PtProfile(){
 
     const handleAptDelete = async(apt_id)=>{
         try{
-            const res = await axios.delete(`http://localhost:3000/api/delete_apt/${apt_id}`);
+            const res = await axios.delete(`${BASE_URL}/api/delete_apt/${apt_id}`);
             if(res.data.success){
                  toast.success("Appointment deleted Successfully!",{
                     autoClose: 2000,
@@ -118,7 +119,7 @@ function PtProfile(){
 
     const handleLogout = async() =>{
         try{
-            const res = await axios.post("http://localhost:3000/api/patient/logout");
+            const res = await axios.post(`${BASE_URL}/api/patient/logout`);
             if(res.data.success){
                  toast.success("Logout Successfully!",{
                                 autoClose: 2000,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { Userdata } from "../ContextApi/Context"; 
-
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 const { loged, logout ,setLoged} = useContext(Userdata);
 const EditDoctor = ({ doctor, setDoctor, closeModal }) => {
@@ -43,7 +43,7 @@ const EditDoctor = ({ doctor, setDoctor, closeModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`http://localhost:3000/api/doc_update/${doctor.doc_id}`, form);
+      const res = await axios.put(`${BASE_URL}/api/doc_update/${doctor.doc_id}`, form);
       if (res.data.success) {
         setDoctor({ ...res.data.data });
  // update parent
