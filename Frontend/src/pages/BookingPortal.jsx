@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./LoginPages/Registration.css";
 import { Link } from "react-router-dom";
-import LoginPt from "./LoginPages/LoginPt.jsx";
+// import LoginPt from "./LoginPages/LoginPt.jsx";
 // import RegistrationPt from "./LoginPages/RegistrationPt.jsx";
 import { useAuth } from "../ContextAPI/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
