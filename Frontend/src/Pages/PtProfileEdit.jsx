@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useAuth } from '../ContextApi/AuthContext';
 
 function PtProfileEdit({pt_profile, setIsEditing}) {
+    const {isLogin, setIsLogin} = useAuth();
     const [pt_name, setPtName] = useState(pt_profile.name);
     const [gender, setGender] = useState(pt_profile.gender);
     const [dob, setDob] = useState(pt_profile.dob);
@@ -27,16 +29,16 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
 
                 // })
                 setIsEditing(false);
+                setIsLogin(false);
                 handleLogout();
             }
         } catch (error) {
               toast.error("Profile Updated failed!",{
-                  autoClose: 2000,
+                autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
                  pauseOnHover: true,
                  draggable: true,
-
                 })
         }
     }
@@ -44,7 +46,10 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
         try{
             const res = await axios.post("http://localhost:3000/api/patient/logout");
             if(res.data.success){
-                 toast.success("Profile Updated successfully!",{
+                // Put line before Please Login Again
+                 toast.success( <>
+                    Profile Updated successfully! <br /> Please login again.
+                </>,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,

@@ -67,16 +67,21 @@ const Header = () => {
             
             <div className="flex items-center space-x-4">
               <div className="text-2xl font-bold text-blue-600">
-                <NavLink to="/">DocSlot</NavLink>
+                <NavLink to={currentRole === "doctor" ? "/doc_home" : "/home"}>
+                DocSlot
+              </NavLink>
               </div>
 
-             
+             { !isLogin &&
               <button
                 onClick={handleToggleRole}
                 className="px-3 py-1 bg-gray-200 text-sm rounded hover:bg-blue-100 text-blue-700 font-semibold transition"
               >
                 Switch to {currentRole === "doctor" ? "Patient" : "Doctor"}
               </button>
+             }
+    
+             
             </div>
 
           
