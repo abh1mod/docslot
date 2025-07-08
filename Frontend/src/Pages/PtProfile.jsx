@@ -76,6 +76,7 @@ function PtProfile(){
         }
     
     useEffect(()=>{
+        if(!isLogin) return;
         if(user?.pt_id) fetchSlot();
     },[user,isLogin]);
 

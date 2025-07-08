@@ -49,7 +49,7 @@ const Home=()=>{
              <TextButton heading={"Smarter Scheduling,Better Care,More Time for Patients, Less Time on Paperwork"} 
              subheading={"Simplify your practice with smart appointment scheduling. Our platform helps doctors manage bookings, reduce no-shows, and stay organized — so you can focus more on patient care and less on paperwork."}/>
               <div className='flex flex-row mt-10 gap-6'>
-            <Button text={"Manage Appointments"} bg={true}/>
+            <Link to="/doc_profile"><Button text={"Manage Appointments"} bg={true}/></Link>
             <Button text={"Watch Video"} video={true}/>
         </div>
              </div>

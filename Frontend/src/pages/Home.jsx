@@ -17,9 +17,10 @@ import { FaPinterest } from "react-icons/fa";
 import { FaTwitch } from "react-icons/fa";
 import { FaWebflow } from "react-icons/fa6";
 import { FaMicrosoft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Home=()=>{
-
+    const navigate = useNavigate();
 //    const [doctors, setDoctors] = useState([]);
 
 //    useEffect(() => {    
@@ -47,7 +48,8 @@ const Home=()=>{
              <TextButton heading={"Providing Quality Healthcare for a Brighter and Healthy Future"} 
              subheading={"Managing a clinic shouldn’t mean managing chaos. Our platform empowers doctors with an intuitive, efficient, and secure solution to schedule appointments, reduce no-shows, and focus more on what matters most — patient care. With real-time updates, automated reminders, and easy calendar access, you stay in control of your day, effortlessly. Let us handle the scheduling, so you can handle the healing."}/>
               <div className='flex flex-row mt-10 gap-6'>
-            <Button text={"Appointments"} bg={true}/>
+            <Link to="/doctor"><Button text={"Appointments"} bg={true}/></Link>
+            
             <Button text={"Watch Video"} video={true}/>
         </div>
              </div>

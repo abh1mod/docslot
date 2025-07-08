@@ -54,7 +54,7 @@ function App() {
             />
 
             <Route path="home" element={<Home />} />
-            <Route path="doc_home" element={<Dochome />} />
+            <Route path="doc_home" element={<Dochome/>} />
             <Route path="about" element={<About />} />
             <Route path="doctor" element={<Doctor />} />
             <Route path="registration_doc" element={<RegistrationDoc />} />

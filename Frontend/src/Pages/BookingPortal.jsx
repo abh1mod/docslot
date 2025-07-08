@@ -109,79 +109,91 @@ function BookingPortal() {
     
 
   return (
-    <div> 
-    
-    <div className="flex flex-col items-center justify-center min-h-[90vh] bg-gray-100">
-      <div className="flex gap-4 bg-white shadow-md rounded-lg p-8 min-w-[830px] max-w-md  min-h-[550px]">
-        
-        <div className="bg-white min-w-[260px] min-h-full">
-            <DocProfileCard events = {doctor}/>
-        </div>
-        <hr/>
-        <div className="bg-white min-w-[490px] min-h-full p-3">
-            <form>
-                <label className="block mb-2 text-l font-medium text-gray-700">Enter Name</label>
-                <input
-                    type="text"
-                    className="w-[400px] p-2 border border-gray-300 rounded-md mb-4"
-                    placeholder="Enter your name" 
-                    defaultValue={user?.name}
-                    disabled 
-                />
-                
-                <div flex className="flex gap-10">
-                    <div>
-                        <label className="block mb-2 text-l font-medium text-gray-700">Select Date</label>
-                        <input
-                        type="date"
-                        className="w-[180px] p-2 border border-gray-300 rounded-md mb-4"
-                        name="date"
-                        onChange={(e)=>setDate(e.target.value)}
-                    />
-                    </div>
-                    <div>
-                        <label className="block mb-2 text-l font-medium text-gray-700">Select Slot</label>
-                    <select className="w-[180px] p-2 border border-gray-300 rounded-md mb-4"
-                    name="slot"
-                    onChange={(e)=>setStartTime(e.target.value)}
-                    disabled = {!date} >
-                        <option value="">Select Slot</option>
-                        {freeSlots.map((slot,index) => <option value={slot}>{slot}</option>)}                           
-                        </select>
 
-                    </div> 
-                </div>
-                <label className="block mb-2 text-l font-medium text-gray-700">Contact Number</label>
-                <input
-                    type="text"
-                    className="w-[400px] p-2 border border-gray-300 rounded-md mb-4"
-                    placeholder="Enter your Contact Number"   
-                    defaultValue={user?.phone}
-                    disabled
-                />
-                <label className="block mb-2 text-l font-medium text-gray-700">Remarks</label>
-                <textarea
-                    className="w-[400px] p-2 border border-gray-300 rounded-md mb-4"
-                    placeholder="Enter any remarks or additional information"
-                    rows="4"    
-                    name="remarks"
-                    onChange={(e)=>setRemarks(e.target.value)}
-                />
-                <button
-                    type="submit"
-                    className="w-[400px] bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200"
-                    onClick={handleBooking}
-                >
-                    Book Appointment
-                </button>
-                    
-                
-            </form>
+    
+  <div className="flex flex-col items-center justify-center min-h-[90vh] bg-gray-100 px-2">
+    <div className="flex flex-col md:flex-row gap-4 bg-white shadow-md rounded-lg p-6 md:p-8 w-full max-w-4xl min-h-[550px]">
+
+      {/* Doc Profile Card — Hidden on small screens */}
+      {/* <div className="hidden md:block bg-white w-full md:w-[260px]"> */}
+         <div className="w-full md:w-[260px]">
+          <DocProfileCard events={doctor} />
         </div>
+      {/* </div> */}
+
+      {/* Form Section */}
+      <div className="bg-white w-full md:w-[490px] p-2 sm:p-3">
+        <form>
+          {/* Name */}
+          <label className="block mb-2 text-l font-medium text-gray-700">Enter Name</label>
+          <input
+            type="text"
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            placeholder="Enter your name"
+            defaultValue={user?.name}
+            disabled
+          />
+
+          {/* Date & Slot */}
+          <div className="flex flex-row gap-4">
+            <div className="flex-1">
+              <label className="block mb-2 text-l font-medium text-gray-700">Select Date</label>
+              <input
+                type="date"
+                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                name="date"
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block mb-2 text-l font-medium text-gray-700">Select Slot</label>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-md mb-4 p-2.5"
+                name="slot"
+                onChange={(e) => setStartTime(e.target.value)}
+                disabled={!date}
+              >
+                <option value="">Select Slot</option>
+                {freeSlots.map((slot, index) => (
+                  <option key={index} value={slot}>{slot}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Contact Number */}
+          <label className="block mb-2 text-l font-medium text-gray-700">Contact Number</label>
+          <input
+            type="text"
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            placeholder="Enter your Contact Number"
+            defaultValue={user?.phone}
+            disabled
+          />
+
+          {/* Remarks */}
+          <label className="block mb-2 text-l font-medium text-gray-700">Remarks</label>
+          <textarea
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            placeholder="Enter any remarks or additional information"
+            rows="4"
+            name="remarks"
+            onChange={(e) => setRemarks(e.target.value)}
+          />
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200"
+            onClick={handleBooking}
+          >
+            Book Appointment
+          </button>
+        </form>
       </div>
     </div>
-    </div>
-  );
+  </div>
+);
 }
 
 
