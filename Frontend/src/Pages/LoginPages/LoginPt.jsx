@@ -131,7 +131,7 @@ const LoginPt = () => {
                  draggable: true,
 
                 })
-            window.location.reload(false);
+            navigate("/home");
          }
          else{
              toast.error("Password Reset failed!",{

@@ -136,7 +136,8 @@ const LoginDoc = () => {
                  draggable: true,
 
                 })
-          window.location.reload(false);
+                navigate("/doc_home");
+          // window.location.reload(false);
          }
          else{
             toast.error("Password reset failed!",{
