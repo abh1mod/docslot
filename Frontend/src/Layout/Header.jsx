@@ -47,7 +47,7 @@ const Header = () => {
           draggable: true,
         });
 
-        navigate("/");
+        navigate("/home");
       } else {
         alert(res.data.message);
       }

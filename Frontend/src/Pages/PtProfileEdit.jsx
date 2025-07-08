@@ -57,7 +57,7 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
                  draggable: true,
 
                 })
-                navigate("/");
+                navigate("/home");
                 // window.location.reload(true);
             }else{
                toast.error("Profile Updation failed!",{

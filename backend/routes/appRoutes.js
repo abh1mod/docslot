@@ -499,7 +499,7 @@ router.get("/my_day/:doc_id", async(req,res)=>{
     const{ doc_id } = req.params;
     try{ 
         const day_schedule = await sql `
-        SELECT start_time, end_time, pt_id, name,date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date, (CURRENT_DATE-dob)/365 AS age,gender 
+        SELECT start_time, end_time, pt_id, apt_id, status, name,date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date, (CURRENT_DATE-dob)/365 AS age,gender 
         FROM appointment NATURAL JOIN patient
         WHERE doc_id = ${doc_id}  ORDER BY date, start_time
         `;
@@ -507,6 +507,20 @@ router.get("/my_day/:doc_id", async(req,res)=>{
         res.status(200).json({success:true, data:day_schedule});
     } catch(error){
         console.log("Error in getting Details ",error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+});
+
+router.patch("/doctor/reject_apt/:apt_id", auth, isDoctor, async(req,res)=>{
+    const {apt_id} = req.params;
+    try{
+        const rejected_apt = await sql`
+        UPDATE appointment SET status = 'Rejected' WHERE apt_id = ${apt_id} RETURNING *
+        `;
+        console.log("Appointment Rejected Successfully",rejected_apt[0]);
+        res.status(200).json({success:true, data:rejected_apt[0]});
+    }catch(error){
+        console.log("Error in Rejecting Appointment",error);
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
