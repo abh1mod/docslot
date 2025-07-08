@@ -16,7 +16,7 @@ import BookingPortal from './Pages/BookingPortal';
 import PtProfile from './Pages/PtProfile';
 import Dochome from './Pages/Dochome';
 import { useContext } from 'react';
-import { AuthContext } from './ContextApi/AuthContext';
+import { AuthContext } from './ContextAPI/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
