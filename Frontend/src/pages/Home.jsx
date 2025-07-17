@@ -50,7 +50,7 @@ const Home=()=>{
               <div className='flex flex-row mt-10 gap-6'>
             <Link to="/doctor"><Button text={"Appointments"} bg={true}/></Link>
             
-            <Button text={"Watch Video"} video={true}/>
+            <Button text={"Watch Video"} video={true}/>          
         </div>
              </div>
              <div className="lg:relative lg:w-1/3 items-center flex flex-col">

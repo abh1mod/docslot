@@ -12,6 +12,7 @@ dotenv.config();
 import axios from "axios"
 import path from "path";
 import { fileURLToPath } from 'url';
+import fileUpload from "express-fileupload";
 
 
 const PORT = process.env.PORT || 3000;
@@ -33,6 +34,10 @@ app.use(express.json()); // use to parse incoming data
 //cors is a browser security feature that prevents which prevent one website from using the resourses of another website
 //cors is used here to handle cors errors
 
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}));
 
 app.use("/api",appRoutes);
 

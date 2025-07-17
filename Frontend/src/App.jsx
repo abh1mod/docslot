@@ -15,6 +15,7 @@ import PtProfileEdit from './pages/PtProfileEdit';
 import BookingPortal from './pages/BookingPortal';
 import PtProfile from './pages/PtProfile';
 import Dochome from './pages/Dochome';
+import EditDocProfile from './pages/EditDocProfile'; 
 import { useContext } from 'react';
 import { AuthContext } from './ContextAPI/AuthContext';
 import { ToastContainer } from 'react-toastify';
@@ -58,6 +59,7 @@ function App() {
             <Route path="about" element={<About />} />
             <Route path="doctor" element={<Doctor />} />
             <Route path="registration_doc" element={<RegistrationDoc />} />
+            <Route path="edit_doc/:doc_id" element={<EditDocProfile />} />
             <Route path="login_doc" element={<LoginDoc />} />
             <Route path="doc_profile" element={<DoctorProfile />} />
             <Route path="registration_pt" element={<RegistrationPt />} />
