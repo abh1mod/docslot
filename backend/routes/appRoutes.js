@@ -216,9 +216,12 @@ router.post('/doctor/forgot_password', async (req, res) => {
         if (user.length === 0) {
             return res.status(404).json({ success: false, message: "User does not exist" });
         }
-
+        const isOtpExist = await redisClient.get(`otp:${email}`);
+        if(isOtpExist != null) {
+            return res.status(200).json({ success: true, message: "OTP Already Sent for password reset Please try to resend after 3 minutes" });
+        }
         const otpSent = Math.floor(100000 + Math.random() * 900000).toString();
-        await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
+        await redisClient.set(`otp:${email}`, otpSent, { ex: 180 });
 
         sendmail({ to: email, subject: 'Password Reset OTP', html: `
                     <div>
@@ -445,7 +448,10 @@ router.post('/patient/forgot_password', async(req,res)=>{
         if (user.length === 0) {
             return res.status(404).json({ success: false, message: "User does not exist" });
         }
-
+        const isOtpExist = await redisClient.get(`otp:${email}`);
+        if(isOtpExist != null) {
+            return res.status(200).json({ success: true, message: "OTP Already Sent for password reset Please try to resend after 3 minutes" });
+        }
         const otpSent = Math.floor(100000 + Math.random() * 900000).toString();
         await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
 
@@ -505,6 +511,21 @@ router.get("/fetch_all",auth, isPatient, async(req,res)=>{
     } catch(error){
         console.log("Error in getting List", error);
         res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+});
+
+router.get("/patient/fetch_slot/:doc_id", auth, isPatient, async(req, res)=>{
+    try{
+        const {doc_id} = req.params;
+        const slot = await sql `SELECT slot from doctor WHERE doc_id = ${doc_id}`;
+        if(slot.length > 0){
+            console.log("Slot Fetched Successfully", slot[0]);
+            res.status(200).json({success:true, data:slot[0]});
+        }
+        else res.status(400).json({success:false, message:`${doc_id} doesn't exist`});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({success:false, message:"Internal Server Error"})
     }
 });
 
