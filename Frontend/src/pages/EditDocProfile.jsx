@@ -129,7 +129,7 @@ const EditDocProfile = () => {
   }
 };
   return (
-    <div className="flex items-center justify-center p-4 bg-gray-100">
+    <div className="flex items-center justify-center pt-4 pb-4 m-0 bg-gray-100 w-screen">
       <div className="w-full lg:w-4/6 mx-auto bg-white md:p-6 p-2 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-2 mt-3 text-center">UPDATE PROFILE</h2>
         <form onSubmit={handleUpdateProfile}>
