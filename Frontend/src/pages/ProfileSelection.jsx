@@ -6,19 +6,19 @@ import  {AuthContext}  from '../ContextAPI/AuthContext';
 const ProfileSelection = ({ onSelect }) => {
   const {role,setRole} = useContext(AuthContext);
   const navigate = useNavigate();
-  const handleDoctorClick = () => {
-  onSelect();
-  setRole("doctor");
-  localStorage.setItem("role", "doctor");
-  navigate("/doc_home");
-};
 
-const handlePatientClick = () => {
-  onSelect();
-  setRole("patient");
-  localStorage.setItem("role", "patient");
-  navigate("/home");
-};
+    const handleDoctorClick = () => {
+      setRole("doctor");
+      localStorage.setItem("role", "doctor");
+      navigate("/doc_home");
+      onSelect();
+    }
+  const handlePatientClick = () => {
+    setRole("patient");
+    localStorage.setItem("role", "patient");
+    navigate("/home");
+    onSelect();
+  }
 
   return (  
     <div className="relative flex justify-between min-w-full max-w-full text-blue-800 font-bold text-[30px]">
