@@ -58,10 +58,8 @@ const LoginPt = () => {
                  closeOnClick: true,
                  pauseOnHover: true,
                  draggable: true,
-
                 })
                 fetchUser();
-                
             } else {
                 toast.error("Error while Login!",{
                   autoClose: 2000,
@@ -69,7 +67,6 @@ const LoginPt = () => {
                  closeOnClick: true,
                  pauseOnHover: true,
                  draggable: true,
-
                 })
                 console.error(res.data.message);
             }

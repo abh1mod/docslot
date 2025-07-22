@@ -193,6 +193,7 @@ function PtProfile(){
                             <button
                                 className="font-medium text-red-700 hover:underline"
                                 title="Delete Appointment"
+                                disabled = {obj.status === "Rejected"}
                                 onClick={() => {
                                 setShowConfirmation(true);
                                 setDeleteId(obj.apt_id);

@@ -96,7 +96,7 @@ const RegistrationPt = () => {
                  draggable: true,
 
                 })
-                navigate("/login_pt")
+                navigate("/pt_profile")
             } else {
                  toast.error("Failed to singup!",{
                   autoClose: 2000,

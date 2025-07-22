@@ -125,7 +125,7 @@ function BookingPortal() {
 
       {/* Form Section */}
       <div className="bg-white w-full md:w-[490px] p-2 sm:p-3">
-        <form>
+        <form onSubmit={handleBooking}>
           {/* Name */}
           <label className="block mb-2 text-l font-medium text-gray-700">Enter Name</label>
           <input
@@ -133,6 +133,8 @@ function BookingPortal() {
             className="w-full p-2 border border-gray-300 rounded-md mb-4"
             placeholder="Enter your name"
             defaultValue={user?.name}
+            maxLength={25}
+            required
             disabled
           />
 
@@ -145,6 +147,8 @@ function BookingPortal() {
                 className="w-full p-2 border border-gray-300 rounded-md mb-4"
                 name="date"
                 onChange={(e) => setDate(e.target.value)}
+                required
+                min = {new Date().toISOString().split('T')[0]}
               />
             </div>
             <div className="flex-1">
@@ -154,6 +158,7 @@ function BookingPortal() {
                 name="slot"
                 onChange={(e) => setStartTime(e.target.value)}
                 disabled={!date}
+                required
               >
                 <option value="">Select Slot</option>
                 {freeSlots.map((slot, index) => (
@@ -170,7 +175,7 @@ function BookingPortal() {
             className="w-full p-2 border border-gray-300 rounded-md mb-4"
             placeholder="Enter your Contact Number"
             defaultValue={user?.phone}
-            disabled
+            maxLength={10}
           />
 
           {/* Remarks */}
@@ -181,13 +186,14 @@ function BookingPortal() {
             rows="4"
             name="remarks"
             onChange={(e) => setRemarks(e.target.value)}
+            required
+            maxLength={50}
           />
 
           {/* Submit */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200"
-            onClick={handleBooking}
           >
             Book Appointment
           </button>
