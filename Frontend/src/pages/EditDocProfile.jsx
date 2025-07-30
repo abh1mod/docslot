@@ -32,7 +32,7 @@ const EditDocProfile = () => {
         slot: user.slot || ""
     });
     setSlotTime(user.slot || "");
-    setPhoto(user.image || "");
+    setPhoto(user.image || "https://res.cloudinary.com/dahtedx9c/image/upload/v1753246193/doctor_images/iurgcqfmt9xsydjrpbho.png");
     }
   }, [user]);
 
@@ -163,6 +163,7 @@ const EditDocProfile = () => {
                   accept="image/*"
                   className="pt-2 pb-2 w-full rounded"
                   onChange={(e) => {
+                    setPhoto("https://res.cloudinary.com/dahtedx9c/image/upload/v1753246428/doctor_images/iohuqxt9x9co0pvvkihd.gif");
                     const file = e.target.files[0];
                     handlePhotoUpload(file);
                   }}

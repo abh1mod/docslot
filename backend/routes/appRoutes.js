@@ -693,4 +693,16 @@ router.get("/busy_slots/:date/:doc_id", async(req,res)=>{
     }
 });
 
+router.get("/patient/slot_duration/:doc_id", async(req,res)=>{
+    const {doc_id} = req.params;
+    try{
+        const hour = await sql `SELECT slot FROM doctor WHERE doc_id = ${doc_id}`;
+        console.log("Duration fetched successfully",hour[0]);
+        res.status(200).json({success:true, data:hour[0]});
+    }catch(error){
+        console.log("Error in fetching slots", error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+})
+
 export default router;

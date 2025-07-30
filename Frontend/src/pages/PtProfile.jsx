@@ -142,6 +142,23 @@ function PtProfile(){
             console.log(error);
         }
     }
+    function manageTime(time) {
+        let hour = time.slice(0,2);
+        let period = hour >= 12 ? 'PM' : 'AM';
+        hour = hour > 12 ? hour - 12 : hour;
+        return `${hour.toString().padStart(2, '0')}:00 ${period}`;
+    }
+    function manageDate(dateStr){
+        const monthArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let year = dateStr.slice(0,4);
+        let month = dateStr.slice(5,7);
+        // console.log(date);
+        let date = dateStr.slice(-2);
+        let i = parseInt(month) - 1;
+        return parseInt(date) +", "+ monthArr[i] + " "+ year ;
+    }
+
+
     if (!isLogin) return <LoginPt/>
 
     return (
@@ -178,10 +195,10 @@ function PtProfile(){
                                 Dr {obj.name}
                             </th>
                             <td class="px-6 py-4">
-                                {obj.date.slice(0,10)}
+                                {manageDate(obj.date.slice(0,10))}
                             </td>
                             <td class="px-6 py-4">
-                                {obj.start_time.slice(0,5)}
+                                {manageTime(obj.start_time.slice(0,5))}
                             </td>
                             {obj.status === "Confirmed" ? (
                                 <td class="px-6 py-4 font-semibold text-green-600">{obj.status}</td>
