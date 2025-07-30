@@ -16,15 +16,19 @@ function BookingPortal() {
     const { doc_id } = useParams();
     const [doctor, fetchDoctor] = useState({});
     const [aptDetails, setAppointment] = useState({});
-    const [isRegistered, setIsRegistered] = useState(true);
-    const [busy_slots, setBusySlots] = useState([]);
+
+    const [slotList, setSlotList] = useState([]);
     const [freeSlots, setFreeSlots] = useState([]);
+    const [busy_slots, setBusySlots] = useState([]);
+    const [duration, setDuration] = useState("10-18");
+
     const [start_time, setStartTime] = useState("");
     const [date, setDate] = useState("");
     const [remarks, setRemarks] = useState("No Remarks");
     const {fetchUser, isLogin, user} = useAuth();
 
     const navigate = useNavigate();
+
     //slot update as soon as date changes
     useEffect(()=>{
         const fetchSlot = async()=>{
@@ -42,14 +46,56 @@ function BookingPortal() {
         fetchSlot()
     },[date]);
 
+    useEffect(()=>{
+      const fetchDuration = async()=>{
+        try{
+          const res = await axios.get(`${BASE_URL}/api/patient/slot_duration/${doc_id}`);
+            if(res.data.success){
+              console.log(res.data.data.slot)
+              setDuration(res.data.data.slot);
+            }
+        }
+        catch(error){
+          console.log("Error in fetching duration",error);
+        }
+      } 
+      fetchDuration();
+    },[doc_id])
 
-    const slotList = ["10:00","11:00","12:00","13:00","16:00","17:00","18:00"];
-    useEffect(() => {
-        if(!date) return;
-        const busySlotList = busy_slots.map(slot => slot.start_time.slice(0,-3)); 
-        setFreeSlots( slotList.filter(slot => !busySlotList.includes(slot)));
-        
-    }, [busy_slots]);
+
+useEffect(() => {
+    if (!date) return;
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10); 
+    const currentTime = now.toTimeString().slice(0, 5); 
+
+    const busySlotList = busy_slots.map(slot => slot.start_time.slice(0, -3));
+
+    const filteredSlots = slotList.filter(slot => {
+        if (busySlotList.includes(slot)) return false;
+        if (date === todayStr && slot < currentTime) return false;
+        return true;
+    });
+    setFreeSlots(filteredSlots);
+}, [busy_slots, date, slotList]);
+
+
+
+    useEffect(()=>{
+      if(duration === null) return;
+      const createSlotList = ()=>{
+          let start_hour = duration.slice(0,2);
+          let end_hour = duration.slice(-2);
+          const temp = [];
+          for(var i = parseInt(start_hour); i<= parseInt(end_hour); i++){
+            temp.push(((i<10) ? " " : "") + i.toString() + ":00");
+          }
+          console.log(temp);
+        setSlotList(temp);
+      }
+      createSlotList();
+    },[duration]);
+
 
     useEffect(()=>{
         const fetchProfile = async()=>{
@@ -69,6 +115,7 @@ function BookingPortal() {
         fetchProfile();
     }, [])
     
+
     const handleBooking = async (event) => {
         event.preventDefault();
         try{
@@ -106,6 +153,13 @@ function BookingPortal() {
 
                 })
         }
+    }
+
+     function manageTime(time) {
+        let hour = time.slice(0,2);
+        let period = hour >= 12 ? 'PM' : 'AM';
+        hour = hour > 12 ? hour - 12 : hour;
+        return `${hour.toString().padStart(2, '0')}:00 ${period}`;
     }
 
     
@@ -162,7 +216,9 @@ function BookingPortal() {
               >
                 <option value="">Select Slot</option>
                 {freeSlots.map((slot, index) => (
-                  <option key={index} value={slot}>{slot}</option>
+                  <option key={index} value={slot}>
+                    {manageTime(slot)}
+                </option>
                 ))}
               </select>
             </div>
