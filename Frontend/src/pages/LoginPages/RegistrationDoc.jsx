@@ -65,7 +65,7 @@ const RegistrationDoc = () => {
             const res = await axios.post(`${BASE_URL}/api/doctor/verify_email`, { otpEntered:otp, email:user.email, password:user.password, doc_name:user.doc_name });
             if (res.data.success) {
                 alert("Registration successful Proceed For Login");
-                navigate("/login_doc")
+                navigate("/doc_profile")
             } else {
               alert(res.data.message);
             

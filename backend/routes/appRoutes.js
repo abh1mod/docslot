@@ -7,7 +7,15 @@ import redisClient from '../utils/redisClient.js';
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
 import {auth, isPatient, isDoctor } from '../middleware/auth.js';
+import { v2 as cloudinary } from 'cloudinary';
+
 dotenv.config();
+
+cloudinary.config({ 
+        cloud_name: 'dahtedx9c', 
+        api_key: process.env.CLOUDINARY_KEY, 
+        api_secret: process.env.CLOUDINARY_SECRET
+    });
 
 router.get("/my_profile", async (req, res) => {
   try {
@@ -46,6 +54,9 @@ router.get("/my_profile", async (req, res) => {
           email: decoded.email,
           image: decoded.image,
           about_us: decoded.about_us,
+          city: decoded.city,
+          address:decoded.address,
+          slot: decoded.slot,
           role: "doctor"
         },
       });
@@ -156,7 +167,10 @@ router.post('/doctor/login', async(req, res)=>{
             phone:user[0].phone,
             email:user[0].email,
             image:user[0].image,
-            about_us:user[0].about_us
+            about_us:user[0].about_us,
+            city: user[0].city,
+            address: user[0].address,
+            slot: user[0].slot 
         },
         
             process.env.JWT_SECRET,
@@ -202,9 +216,12 @@ router.post('/doctor/forgot_password', async (req, res) => {
         if (user.length === 0) {
             return res.status(404).json({ success: false, message: "User does not exist" });
         }
-
+        const isOtpExist = await redisClient.get(`otp:${email}`);
+        if(isOtpExist != null) {
+            return res.status(200).json({ success: true, message: "OTP Already Sent for password reset Please try to resend after 3 minutes" });
+        }
         const otpSent = Math.floor(100000 + Math.random() * 900000).toString();
-        await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
+        await redisClient.set(`otp:${email}`, otpSent, { ex: 180 });
 
         sendmail({ to: email, subject: 'Password Reset OTP', html: `
                     <div>
@@ -249,6 +266,41 @@ router.post('/doctor/reset_password', async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }   
 });
+
+router.post('/doctor/upload_image/:doc_id', async (req, res) => {
+    try {
+        const image = req.files.photo;
+        const result = await cloudinary.uploader.upload(image.tempFilePath, {
+            folder: "doctor_images"
+        });
+        const profile_photo = await sql`
+            UPDATE doctor SET image = ${result.secure_url} WHERE doc_id = ${req.params.doc_id} RETURNING *
+        `;
+        res.status(200).json({ success: true, data: profile_photo[0].image });
+    } catch (error) {
+        console.error("Image Upload Error:", error);
+        res.status(500).json({ success: false, message: "Image Upload Failed" });
+    }
+});
+
+//UPDATE
+router.put('/doctor/update/:doc_id',async(req,res)=>{
+    const {doc_id} = req.params;
+    const {name, specialization,phone,email,address,city,about,slot} = req.body.formData;
+    try{
+        const newProfile = await sql`
+        UPDATE doctor SET name = ${name}, specialization = ${specialization}, phone = ${phone}, 
+        email = ${email}, address = ${address},city = ${city},about_us=${about}, slot = ${slot}
+        WHERE doc_id = ${doc_id} RETURNING *
+        `;
+        console.log("Your Profile Has been Updated", newProfile);
+        res.status(201).json({success:true, data:newProfile, message:"Profile Updated Successfully!"});
+    }
+    catch(error){
+        console.log("Error in Updating Profile",error);
+        res.status(500).json({success:false,message:"Internal Server error"});
+    }
+})
 
 router.post('/patient/send_otp', async(req, res) => {
     let {pt_name, email} = req.body;
@@ -396,7 +448,10 @@ router.post('/patient/forgot_password', async(req,res)=>{
         if (user.length === 0) {
             return res.status(404).json({ success: false, message: "User does not exist" });
         }
-
+        const isOtpExist = await redisClient.get(`otp:${email}`);
+        if(isOtpExist != null) {
+            return res.status(200).json({ success: true, message: "OTP Already Sent for password reset Please try to resend after 3 minutes" });
+        }
         const otpSent = Math.floor(100000 + Math.random() * 900000).toString();
         await redisClient.set(`otp:${email}`, otpSent, { ex: 300 });
 
@@ -459,6 +514,21 @@ router.get("/fetch_all",auth, isPatient, async(req,res)=>{
     }
 });
 
+router.get("/patient/fetch_slot/:doc_id", auth, isPatient, async(req, res)=>{
+    try{
+        const {doc_id} = req.params;
+        const slot = await sql `SELECT slot from doctor WHERE doc_id = ${doc_id}`;
+        if(slot.length > 0){
+            console.log("Slot Fetched Successfully", slot[0]);
+            res.status(200).json({success:true, data:slot[0]});
+        }
+        else res.status(400).json({success:false, message:`${doc_id} doesn't exist`});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({success:false, message:"Internal Server Error"})
+    }
+});
+
 //READ route for doctor to check his profile 
 router.get('/doc_profile/:doc_id',  async(req,res)=>{
     try{
@@ -475,24 +545,6 @@ router.get('/doc_profile/:doc_id',  async(req,res)=>{
     }
 })
 
-//UPDATE
-router.put('/doc_update/:doc_id',async(req,res)=>{
-    const{doc_id} = req.params;
-    const {name, specialization,phone,email,image,about_us} = req.body;
-    try{
-        const newProfile = await sql`
-        UPDATE doctor SET name = ${name}, specialization = ${specialization}, phone = ${phone}, 
-        email = ${email},image = ${image},about_us=${about_us}
-        WHERE doc_id = ${doc_id} RETURNING *
-        `;
-        console.log("Your Profile Has been Updated", newProfile);
-        res.status(201).json({success:true,data:newProfile});
-    }
-    catch(error){
-        console.log("Error in Updating Profile",error);
-        res.status(500).json({success:false,message:"Internal Server error"});
-    }
-})
 
 //READ route for doctor to check his slot in a day
 router.get("/my_day/:doc_id", async(req,res)=>{
@@ -539,7 +591,6 @@ router.delete("/remove_acc/:id", async(req,res)=>{
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
-
 
 //route for pateint to get his profile details
 router.get('/pt_profile/:pt_id', auth, isPatient, async(req,res)=>{
@@ -641,5 +692,17 @@ router.get("/busy_slots/:date/:doc_id", async(req,res)=>{
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 });
+
+router.get("/patient/slot_duration/:doc_id", async(req,res)=>{
+    const {doc_id} = req.params;
+    try{
+        const hour = await sql `SELECT slot FROM doctor WHERE doc_id = ${doc_id}`;
+        console.log("Duration fetched successfully",hour[0]);
+        res.status(200).json({success:true, data:hour[0]});
+    }catch(error){
+        console.log("Error in fetching slots", error);
+        res.status(500).json({success:false, message:"Internal Server Error"});
+    }
+})
 
 export default router;

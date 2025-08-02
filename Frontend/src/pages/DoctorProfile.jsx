@@ -5,7 +5,7 @@ import { FaArrowAltCircleDown } from "react-icons/fa"
 import { FaArrowCircleUp } from "react-icons/fa";
 import { useAuth } from "../ContextAPI/AuthContext";
 import LoginDoc from "./LoginPages/LoginDoc";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from 'react-toastify';
 import RemoveIcon from "../assets/remove.png";
 
@@ -166,7 +166,6 @@ const count=upcomingAppointments.filter((item)=>{
                 })
                 setIsLogin(false);
                 navigate("/doc_home");
-               
             }else{
                  toast.error("Error while Logout!",{
                   autoClose: 2000,
@@ -225,9 +224,11 @@ return <>
           <p className="text-sm">Appointments Today</p>
           <p className="text-3xl font-bold">{count.length}</p>
         </div>
-        <button className="bg-blue-500 text-white rounded-lg flex items-center justify-center p-4">
+        <Link to={`/edit_doc/${user?.doc_id}`} className="bg-blue-500 text-white rounded-lg flex items-center justify-center p-4">
+        <button >
           Manage Profile   
         </button>
+        </Link>
         
       </div>
       <div className="bg-gray-100 rounded-lg divide-y divide-gray-00">
