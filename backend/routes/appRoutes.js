@@ -503,7 +503,7 @@ router.post('/patient/reset_password', async (req, res) => {
 router.get("/fetch_all",auth, isPatient, async(req,res)=>{
     try{
         const doctors = await sql`
-            SELECT doc_id, name, specialization,phone, email, about_us, image FROM doctor
+            SELECT doc_id, name, specialization,phone, email, about_us,city, image FROM doctor
             ORDER BY id DESC
         `;
         console.log("fetched doctors",doctors);
