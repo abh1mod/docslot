@@ -1,7 +1,7 @@
 export default function DocCard({events}) {
   const {name, image, mobile, phone, about_us, email,specialization, city} = events
   return (
-    <div className="w-[260px] sm:w-[320px] lg:w-[360px] mx-auto bg-white rounded-2xl shadow-md hover:shadow-[6px_6px_15px_rgba(0,0,0,0.2)] transition-shadow duration-300 p-6 border border-gray-100">
+    <div className="w-[280px] sm:w-[320px] lg:w-[360px] mx-auto bg-white rounded-2xl shadow-md hover:shadow-[6px_6px_15px_rgba(0,0,0,0.2)] transition-shadow duration-300 p-6 border border-gray-100">
       {/* Profile Image */}
       <div className="flex justify-center">
         <img

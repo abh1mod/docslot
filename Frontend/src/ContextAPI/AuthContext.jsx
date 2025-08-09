@@ -34,22 +34,6 @@ const AuthProvider = ({ children }) => {
        fetchUser();
     },[]);
 
-    useEffect(() => {
-      let timeoutId;
-
-      if (isLogin) {
-          timeoutId = setTimeout(() => {
-              alert("Session timed out. Please log in again.");
-              window.location.href = "/";
-          }, 20 * 60 * 1000);
-      }
-
-      return () => {
-          clearTimeout(timeoutId); 
-      };
-  }, [isLogin]);
-
-
 
   return (
     <AuthContext.Provider value={{ isLogin, setIsLogin, user, setUser, fetchUser,role,setRole}}>
