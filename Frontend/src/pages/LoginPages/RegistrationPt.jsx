@@ -70,7 +70,7 @@ const RegistrationPt = () => {
                 console.error(res.data.message);
             }
         } catch (error) {
-               toast.error("Error while Action!",{
+               toast.error(`${error.response.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
@@ -109,7 +109,7 @@ const RegistrationPt = () => {
             
             }
         } catch (error) {
-               toast.error("Error while Action!",{
+               toast.error(`${error.response.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
@@ -126,94 +126,108 @@ const RegistrationPt = () => {
 
 
    //main container
-    <div className="flex flex-col justify-center items-center min-h-[85vh] bg-gray-100">
-      <div className=" flex bg-white px-5 gap-2 shadow-md rounded-lg min-h-[450px] min-w-[760px]">
-        <div className="flex flex-col justify-center items-center p-10 w-full">
-          <img
-            src={PtImg}
-            alt="Patient"
-            className="w-[300px] h-[280px] object-cover rounded-l-lg"
-          />
-        </div>
-        <div className="flex flex-col p-10 w-full">
-          <h2 className="text-3xl font-bold mb-6 font-">Sign Up</h2>
-          <form className="flex flex-col gap-5" onSubmit={handleSendOtp}>
-          
-            <input 
-              type="text"
-              name="pt_name"
-              value={user.pt_name}
-              onChange={handleChange}
-              disabled = {otpSent}
-              className="w-full text-[15px] px-3 py-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
-              placeholder="👤 Name"
-            />
-            
-            <input
-              type="email"
-              name="email"
-              value={user.email}
-              onChange={handleChange}
-              disabled = {otpSent}
-              className="w-full text-[15px] px-3 py-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
-              placeholder="📧 Email"
-            />
-            <div className={`flex flex-col gap-5 ${otpSent ? 'hidden' : ''}`}>
-              <input
-              type="password"
-              name="password"
-              value={user.password}
-              onChange={handleChange}
-              disabled = {user.confirmPassword.length > 0 }
-              className={`w-full text-[15px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500`}
-              required
-              placeholder="🔑 Password"
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              value={user.confirmPassword}
-              onChange={handleChange}
-              disabled = {user.password.length < 6 }
-              className={`w-full text-[15px] px-3 py-2 border ${mismatch ? 'border-red-500' : 'border-gray-300'}  rounded-md focus:outline-none `}
-              required
-              placeholder="🔑 Confirm Password"
-            />
-            <div className="flex justify-between items-center">
-              <button disabled={mismatch || user.confirmPassword.length===0} type="submit" className="min-w-[112px] text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700">Send OTP</button>
-              {mismatch && <p className="text-red-500 text-sm">Both passwords must <br/> be the same</p>}
-            </div>
+  <div className="flex justify-center items-center h-[83vh] p-2 bg-white sm:bg-gray-100">
+  <div className="sm:min-w-[26%] min-w-[80%] min-h-[70%] bg-white sm:shadow-lg flex flex-col justify-center rounded-lg gap-2 sm:p-8 p-0 text-center">
 
-              <Link to = "/login_pt" className="text-sm cursor-pointer underline ">Already Have an Account?</Link>
-            </div> 
-                          
-          </form>
+    <h2 className="text-3xl font-bold mb-6 font-sans">Sign Up</h2>
 
-          <form className="flex flex-col gap-5 mt-5" onSubmit={handleRegistration}>
-            <input 
-              type="text"
-              name="Enter OTP"
-              value={otp}
-              onChange = {(e) => setOtp(e.target.value)}
-              className={`w-full text-[15px] px-3 py-2 border ${otpSent ? '':'hidden'} border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500`}
-              required
-              placeholder="🔓 Enter OTP"
-            />
-              <button
-                onClick={handleRegistration}
-                type="submit"
-                  className={` ${otpSent ? '':'hidden'} max-w-[112px] text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}  
-              >Verify</button>
-              
-            </form>
-              
-      </div>
-        
-        
-      </div>
-      </div>
+    {/* Sign Up Form */}
+    <form
+      className={`flex flex-col gap-5 items-center ${otpSent ? "hidden" : ""}`}
+      onSubmit={handleSendOtp}
+    >
+      <input
+        type="text"
+        name="pt_name"
+        value={user.pt_name}
+        onChange={handleChange}
+        disabled={otpSent}
+        className="w-full max-w-sm text-[15px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+        required
+        placeholder="👤 Name"
+      />
+
+      <input
+        type="email"
+        name="email"
+        value={user.email}
+        onChange={handleChange}
+        disabled={otpSent}
+        className="w-full max-w-sm text-[15px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+        required
+        placeholder="📧 Email"
+      />
+
+      <input
+        type="password"
+        name="password"
+        value={user.password}
+        onChange={handleChange}
+        disabled={user.confirmPassword.length > 0}
+        className="w-full max-w-sm text-[15px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+        required
+        placeholder="🔑 Password"
+      />
+
+      <input
+        type="password"
+        name="confirmPassword"
+        value={user.confirmPassword}
+        onChange={handleChange}
+        disabled={user.password.length < 6}
+        className={`w-full max-w-sm text-[15px] px-3 py-2 border ${
+          mismatch ? "border-red-500" : "border-gray-300"
+        } rounded-md focus:outline-none`}
+        required
+        placeholder="🔑 Confirm Password"
+      />
+
+      {mismatch && (
+        <p className="text-red-500 text-sm text-center">
+          Both passwords must be the same
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={mismatch || user.confirmPassword.length === 0}
+        className="w-full max-w-sm text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-md text-sm px-5 py-2.5"
+      >
+        Send OTP
+      </button>
+
+      <Link
+        to="/login_pt"
+        className="text-sm cursor-pointer underline text-blue-600 hover:text-blue-800"
+      >
+        Already Have an Account?
+      </Link>
+    </form>
+
+    {/* OTP Verification Form */}
+    <form
+      className={`flex flex-col gap-5 items-center ${otpSent ? "" : "hidden"}`}
+      onSubmit={handleRegistration}
+    >
+      <input
+        type="text"
+        name="otp"
+        value={otp}
+        onChange={(e) => setOtp(e.target.value)}
+        className="w-full max-w-sm text-[15px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+        required
+        placeholder="🔓 Enter OTP"
+      />
+      <button
+        type="submit"
+        className="w-full max-w-sm text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-md text-sm px-5 py-2.5"
+      >
+        Verify
+      </button>
+    </form>
+  </div>
+</div>
+
     
   );
 };

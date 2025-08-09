@@ -1,4 +1,11 @@
-.active{
-    font-weight:700;
-    color:blue;
+.nav-link {
+  @apply text-gray-700 font-medium hover:text-blue-600 transition-colors;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm hover:bg-blue-700 transition-colors;
+}
+
+.mobile-link {
+  @apply block py-2 text-gray-700 hover:text-blue-600 transition-colors;
 }

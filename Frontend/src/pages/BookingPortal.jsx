@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./LoginPages/Registration.css";
 import { Link } from "react-router-dom";
-// import LoginPt from "./LoginPages/LoginPt.jsx";
+import LoginPt from "./LoginPages/LoginPt.jsx";
 // import RegistrationPt from "./LoginPages/RegistrationPt.jsx";
 import { useAuth } from "../ContextAPI/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,7 @@ function BookingPortal() {
     const [start_time, setStartTime] = useState("");
     const [date, setDate] = useState("");
     const [remarks, setRemarks] = useState("No Remarks");
+    const [category, setCategory] = useState("");
     const {fetchUser, isLogin, user} = useAuth();
 
     const navigate = useNavigate();
@@ -120,7 +121,7 @@ useEffect(() => {
         event.preventDefault();
         try{
             console.log(start_time, date);
-            const res = await axios.post(`${BASE_URL}/api/book_appointment/${doc_id}/${user.pt_id}`, {start_time,date,remarks});
+            const res = await axios.post(`${BASE_URL}/api/book_appointment/${doc_id}/${user.pt_id}`, {start_time,date,remarks,category});
             if(res.data.success){
                  toast.success("Booking Successfully!",{
                   autoClose: 2000,
@@ -163,22 +164,24 @@ useEffect(() => {
     }
 
     
-
+    if(!isLogin) {
+      return <LoginPt />;
+    }
   return (
 
     
-  <div className="flex flex-col items-center justify-center min-h-[90vh] bg-gray-100 px-2">
-    <div className="flex flex-col md:flex-row gap-4 bg-white shadow-md rounded-lg p-6 md:p-8 w-full max-w-4xl min-h-[550px]">
+  <div className="flex flex-col items-center justify-center min-h-[90vh] bg-gray-100 px-0">
+    <div className="flex flex-col lg:gap-18 lg:p-10 md:flex-row gap-2 justify-center  bg-white shadow-md rounded-lg p-6 lg:w-[60%] sm:w-[75%] w-[95%] min-h-[550px]">
 
       {/* Doc Profile Card — Hidden on small screens */}
       {/* <div className="hidden md:block bg-white w-full md:w-[260px]"> */}
-         <div className="w-full md:w-[260px]">
+         <div className="w-full lg:w-[60%]">
           <DocProfileCard events={doctor} />
         </div>
       {/* </div> */}
 
       {/* Form Section */}
-      <div className="bg-white w-full md:w-[490px] p-2 sm:p-3">
+      <div className="bg-white w-full p-0 sm:p-3">
         <form onSubmit={handleBooking}>
           {/* Name */}
           <label className="block mb-2 text-l font-medium text-gray-700">Enter Name</label>
@@ -224,15 +227,21 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* Contact Number */}
-          <label className="block mb-2 text-l font-medium text-gray-700">Contact Number</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
-            placeholder="Enter your Contact Number"
-            defaultValue={user?.phone}
-            maxLength={10}
-          />
+       
+          <label className="block mb-2 text-l font-medium text-gray-700">Appointment Category</label>
+          <select
+                className="w-full p-2 border border-gray-300 rounded-md mb-4 p-2.5"
+                name=""
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="">Select Category</option>
+                {["Consultation","Routine Checkup","Follow-up Visit","Annual Physical","Others"].map((type, index) => (
+                  <option key={index} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
 
           {/* Remarks */}
           <label className="block mb-2 text-l font-medium text-gray-700">Remarks</label>

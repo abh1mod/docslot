@@ -1,6 +1,6 @@
 import React from 'react';
 
-const defaultPicture = "https://png.pngtree.com/png-clipart/20241112/original/pngtree-smiling-cartoon-doctor-with-stethoscope-clipart-png-image_16976469.png";
+const defaultPicture = "https://res.cloudinary.com/dahtedx9c/image/upload/v1753246428/doctor_images/iohuqxt9x9co0pvvkihd.gif";
 
 const DocProfileCard = ({ events }) => {
   const { name, specialization, phone, email, image, about_us } = events;
@@ -17,11 +17,11 @@ const DocProfileCard = ({ events }) => {
 
       {/* Info Section */}
       <div className="flex flex-col justify-center text-left md:text-center">
-        <h1 className="text-lg md:text-xl font-bold text-blue-900">{name}</h1>
+        <h1 className="text-lg md:text-xl font-bold text-blue-900">Dr {name}</h1>
         <h2 className="text-sm md:text-base text-gray-600">{specialization}</h2>
         <p className="text-sm">📞 {phone}</p>
-        <h2 className="text-blue-900 font-semibold text-sm mt-2">About Us</h2>
-        <p className="text-xs md:text-sm text-gray-600 leading-tight text-justify">{about_us}</p>
+        <h2 className="text-blue-900 font-semibold text-sm mt-2 ">About Us</h2>
+        <p className="text-xs md:text-sm text-gray-600 line-clamp-6 md:text-justify">{about_us}</p>
       </div>
       
     </div>

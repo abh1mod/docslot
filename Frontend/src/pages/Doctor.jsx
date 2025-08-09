@@ -43,7 +43,7 @@ const Doctor = () => {
       }
     };
     fetchDoctors();
-  }, [isLogin]);
+  }, []);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -80,96 +80,125 @@ const Doctor = () => {
     ? City.filter((item) => item.toLowerCase().includes(searchcity.toLowerCase()))
     : City;
 
-  if (!isLogin) return <LoginPt />;
+  // if (!isLogin) return <LoginPt />;
 
   return (
-    <div className="p-4 bg-gray-100 min-h-screen">
+    <div className="flex flex-col align-items-center  p-4 bg-gray-50 min-h-screen ">
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
-        {/* Specialization Filter */}
-        <div className="relative w-full md:w-1/3" ref={specRef}>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onClick={() => setShowSpecDropdown(true)}
-            placeholder="Search Specialization"
-            className="border p-1 rounded w-full"
-          />
-          {showSpecDropdown && (
-            <div className="absolute z-10 bg-white w-full mt-1 border rounded max-h-40 overflow-y-auto">
-              {filteredSpecs.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setFilterspec(item);
-                    setSearch("");
-                    setShowSpecDropdown(false);
-                  }}
-                  className="cursor-pointer hover:bg-gray-200 px-2 py-1"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          )}
-          {filterspec && (
-            <div className="mt-1 flex items-center gap-2 bg-gray-200 text-sm p-1 rounded w-fit">
-              {filterspec}
-              <ImCross
-                onClick={() => setFilterspec("")}
-                className="cursor-pointer text-xs text-red-600"
-              />
-            </div>
-          )}
-        </div>
+      <div className="flex flex-col md:flex-row md:items-start items-center justify-center gap-3 mb-6 mt-3">
+  {/* Specialization Filter */}
+  <div className="relative w-full max-w-xs " ref={specRef}>
+    {/* Search input */}
+    <input
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      onClick={() => setShowSpecDropdown(true)}
+      placeholder="Search Specialization..."
+      className="border border-gray-300 focus:border-blue-500 focus:ring-2 
+                 focus:ring-blue-200 p-2 rounded-lg w-full shadow-sm 
+                 transition-all duration-200 outline-none"
+    />
 
-        {/* City Filter */}
-        <div className="relative w-full md:w-1/3" ref={cityRef}>
-          <input
-            value={searchcity}
-            onChange={(e) => setSearchcity(e.target.value)}
-            onClick={() => setShowCityDropdown(true)}
-            placeholder="Search City"
-            className="border p-1 rounded w-full"
-          />
-          {showCityDropdown && (
-            <div className="absolute z-10 bg-white w-full mt-1 border rounded max-h-40 overflow-y-auto">
-              {filteredCities.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setFilterspeccity(item);
-                    setSearchcity("");
-                    setShowCityDropdown(false);
-                  }}
-                  className="cursor-pointer hover:bg-gray-200 px-2 py-1"
-                >
-                  {item}
-                </div>
-              ))}
+    {/* Dropdown */}
+    {showSpecDropdown && (
+      <div className="absolute z-10 bg-white w-full mt-1 border border-gray-200 
+                      rounded-lg shadow-lg max-h-40 overflow-y-auto animate-fadeIn">
+        {filteredSpecs.length > 0 ? (
+          filteredSpecs.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                setFilterspec(item);
+                setSearch("");
+                setShowSpecDropdown(false);
+              }}
+              className="cursor-pointer hover:bg-blue-100 px-3 py-2 text-gray-700 
+                         transition-colors duration-150"
+            >
+              {item}
             </div>
-          )}
-          {filterspeccity && (
-            <div className="mt-1 flex items-center gap-2 bg-gray-200 text-sm p-1 rounded w-fit">
-              {filterspeccity}
-              <ImCross
-                onClick={() => setFilterspeccity("")}
-                className="cursor-pointer text-xs text-red-600"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Clear Filters */}
-        {(filterspec || filterspeccity) && (
-          <button
-            onClick={clearFilters}
-            className="bg-red-500 text-white px-3 py-1 rounded self-start"
-          >
-            Clear Filters
-          </button>
+          ))
+        ) : (
+          <div className="px-3 py-2 text-gray-500 italic">No results found</div>
         )}
       </div>
+    )}
+
+    {/* Selected specialization tag */}
+    {filterspec && (
+      <div className="mt-2 flex items-center gap-2 bg-blue-100 text-blue-800 
+                      text-sm px-3 py-1 rounded-full shadow-sm w-fit">
+        <span>{filterspec}</span>
+        <ImCross
+          onClick={() => setFilterspec("")}
+          className="cursor-pointer text-xs hover:text-red-600 transition-colors"
+        />
+      </div>
+    )}
+  </div>
+
+  {/* City Filter */}
+  <div className="relative w-full max-w-xs " ref={cityRef}>
+    {/* Search input */}
+    <input
+      value={searchcity}
+      onChange={(e) => setSearchcity(e.target.value)}
+      onClick={() => setShowCityDropdown(true)}
+      placeholder="Search City..."
+      className="border border-gray-300 focus:border-blue-500 focus:ring-2 
+                 focus:ring-blue-200 p-2 rounded-lg w-full shadow-sm 
+                 transition-all duration-200 outline-none"
+    />
+
+    {/* Dropdown */}
+    {showCityDropdown && (
+      <div className="absolute z-10 bg-white w-full mt-1 border border-gray-200 
+                      rounded-lg shadow-lg max-h-40 overflow-y-auto animate-fadeIn">
+        {filteredCities.length > 0 ? (
+          filteredCities.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                setFilterspeccity(item);
+                setSearchcity("");
+                setShowCityDropdown(false);
+              }}
+              className="cursor-pointer hover:bg-blue-100 px-3 py-2 text-gray-700 
+                         transition-colors duration-150"
+            >
+              {item}
+            </div>
+          ))
+        ) : (
+          <div className="px-3 py-2 text-gray-500 italic">No results found</div>
+        )}
+      </div>
+    )}
+
+    {/* Selected city tag */}
+    {filterspeccity && (
+      <div className="mt-2 flex items-center gap-2 bg-blue-100 text-blue-800 
+                      text-sm px-3 py-1 rounded-full shadow-sm w-fit">
+        <span>{filterspeccity}</span>
+        <ImCross
+          onClick={() => setFilterspeccity("")}
+          className="cursor-pointer text-xs hover:text-red-600 transition-colors"
+        />
+      </div>
+    )}
+  </div>
+
+  {/* Clear Filters */}
+  {(filterspec || filterspeccity) && (
+    <button
+      onClick={clearFilters}
+      className="bg-red-500 text-white px-3 py-1 rounded shadow-sm hover:bg-red-600 transition"
+    >
+      Clear Filters
+    </button>
+  )}
+</div>
+
 
       {/* Doctor Cards */}
       {loading ? (
@@ -177,15 +206,21 @@ const Doctor = () => {
       ) : filteredDoctors.length === 0 ? (
         <p>No doctors found.</p>
       ) : (
-        <ul className="space-y-4">
-          {filteredDoctors.map((doc, index) => (
-            <li key={index}>
-              <Link to={`/booking/${doc.doc_id}`} className="no-underline text-black">
-                <DocCard events={doc} />
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="w-full flex justify-center">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
+    {filteredDoctors.map((doc, index) => (
+      <Link
+        key={index}
+        to={`/booking/${doc.doc_id}`}
+        className="no-underline text-black w-full md:w-auto"
+      >
+        <DocCard events={doc} />
+      </Link>
+    ))}
+  </div>
+</div>
+
+        
       )}
     </div>
   );
