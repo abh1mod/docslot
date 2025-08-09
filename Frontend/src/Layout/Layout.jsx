@@ -13,7 +13,7 @@ function Layout(){
      <Provider>
     <div className="layout w-screen">
     <Header />
-      <main className="main-content w-full ">
+      <main className="main-content w-full p-0 md:p-3 ">
         <Outlet />
       </main>
       <Footer />

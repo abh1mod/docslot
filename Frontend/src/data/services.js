@@ -8,38 +8,38 @@ import surgery from "../assets/services/Container (3).png";
 export const services = [
   {
     src: eyeCare,
-    heading: "Eye care",
+    heading: "Eye Care",
     subheading:
-      "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
+      "Comprehensive eye examinations, vision correction, and treatment for eye diseases to help you maintain healthy eyesight for life.",
   },
   {
     src: dental,
-    heading: "Dental treatments",
+    heading: "Dental Treatments",
     subheading:
-      "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
+      "From routine cleanings to advanced dental procedures, we provide complete oral care to keep your smile healthy and bright.",
   },
   {
     src: bones,
-    heading: "Bones treatments",
+    heading: "Bone Treatments",
     subheading:
-      "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
+      "Specialized care for fractures, arthritis, and other bone-related conditions to restore mobility and improve quality of life.",
   },
   {
     src: diagnosis,
     heading: "Diagnosis",
     subheading:
-      "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
+      "Accurate and timely diagnostic services using advanced medical technology to ensure the right treatment from the start.",
   },
   {
     src: cardio,
     heading: "Cardiology",
     subheading:
-      "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
+      "Heart health services including screenings, preventive care, and treatment for cardiovascular diseases by expert cardiologists.",
   },
   {
     src: surgery,
     heading: "Surgery",
     subheading:
-      "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
+      "Safe and effective surgical procedures, from minor operations to complex surgeries, performed by experienced surgeons.",
   },
 ];

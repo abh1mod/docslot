@@ -11,6 +11,40 @@ import { v2 as cloudinary } from 'cloudinary';
 
 dotenv.config();
 
+function formatTime(timeStr) {
+  const [hourStr, minuteStr] = timeStr.split(':');
+  let hour = parseInt(hourStr, 10);
+  const minute = minuteStr;
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12;
+  if (hour === 0) hour = 12;
+  return `${hour}:${minute} ${ampm}`;
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+function calculateAge(dob) {
+  if (!dob) return "N/A";
+  const birthDate = new Date(dob);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  const dayDiff = today.getDate() - birthDate.getDate();
+  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+    age--;
+  }
+
+  return age;
+}
+
 cloudinary.config({ 
         cloud_name: 'dahtedx9c', 
         api_key: process.env.CLOUDINARY_KEY, 
@@ -283,24 +317,141 @@ router.post('/doctor/upload_image/:doc_id', async (req, res) => {
     }
 });
 
-//UPDATE
-router.put('/doctor/update/:doc_id',async(req,res)=>{
-    const {doc_id} = req.params;
-    const {name, specialization,phone,email,address,city,about,slot} = req.body.formData;
-    try{
-        const newProfile = await sql`
-        UPDATE doctor SET name = ${name}, specialization = ${specialization}, phone = ${phone}, 
-        email = ${email}, address = ${address},city = ${city},about_us=${about}, slot = ${slot}
-        WHERE doc_id = ${doc_id} RETURNING *
+router.post('/patient/upload_report/:apt_id', async (req, res) => {
+    try {
+        const image = req.files.photo;
+        const result = await cloudinary.uploader.upload(image.tempFilePath, {
+            folder: "report_images"
+        });
+
+        // Update appointment with report URL
+        const report_photo = await sql`
+            UPDATE appointment SET report = ${result.secure_url} WHERE apt_id = ${req.params.apt_id} RETURNING *
         `;
-        console.log("Your Profile Has been Updated", newProfile);
-        res.status(201).json({success:true, data:newProfile, message:"Profile Updated Successfully!"});
+
+        const appointment = report_photo[0];
+
+        const patient = await sql`
+            SELECT pt_id, name, gender, phone, email, dob FROM patient WHERE pt_id = ${appointment.pt_id}
+        `;
+
+        const doctor = await sql`
+            SELECT name, email, doc_id FROM doctor WHERE doc_id = ${appointment.doc_id}
+        `;
+
+        const dobFormatted = patient[0].dob ? new Date(patient[0].dob).toISOString().split('T')[0] : "N/A";
+
+        const formattedDate = formatDate(appointment.date);
+        const formattedTime = formatTime(appointment.start_time);
+        const age = calculateAge(patient[0].dob);
+        const htmlEmail = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: black;">
+            <h2 style="color: #27ae60;">New Report Uploaded</h2>
+            <p>Dear Dr. ${doctor[0].name},</p>
+            <p>The patient <strong>${patient[0].name}</strong> has uploaded a new report for their appointment.</p>
+            <h3>Patient Details:</h3>
+            <ul>
+            <li><strong>Name:</strong> ${patient[0].name}</li>
+            <li><strong>Gender:</strong> ${patient[0].gender}</li>
+            <li><strong>Phone:</strong> ${patient[0].phone}</li>
+            <li><strong>Email:</strong> ${patient[0].email}</li>
+            <li><strong>Age:</strong> ${age} years</li>
+            </ul>
+            <h3>Appointment Details:</h3>
+            <ul>
+            <li><strong>Appointment ID:</strong> ${appointment.apt_id}</li>
+            <li><strong>Date:</strong> ${formattedDate}</li>
+            <li><strong>Time:</strong> ${formattedTime}</li>
+            <li><strong>Status:</strong> ${appointment.status}</li>
+            <li><strong>Category:</strong> ${appointment.category}</li>
+            <li><strong>Remarks:</strong> ${appointment.remarks || "N/A"}</li>
+            </ul>
+            <p>You can view the uploaded report here:</p>
+            <a href="${appointment.report}" style="color: #2980b9; text-decoration: none;">View Report</a>
+            <p>If you did not expect this email, please ignore it.</p>
+        </div>
+        `;
+
+
+
+        sendmail({
+            to: doctor[0].email,
+            subject: "New Patient Report Uploaded",
+            html: htmlEmail
+        });
+
+        res.status(200).json({ success: true, data: report_photo[0].report });
+
+    } catch (error) {
+        console.error("Image Upload Error:", error);
+        res.status(500).json({ success: false, message: "Image Upload Failed" });
     }
-    catch(error){
-        console.log("Error in Updating Profile",error);
-        res.status(500).json({success:false,message:"Internal Server error"});
+});
+
+
+//UPDATE
+
+router.put('/doctor/update/:doc_id', async (req, res) => {
+    const { doc_id } = req.params;
+    const { name, specialization, phone, email, address, city, about, slot } = req.body.formData;
+
+    try {
+        const newProfile = await sql`
+            UPDATE doctor 
+            SET 
+                name = ${name}, 
+                specialization = ${specialization}, 
+                phone = ${phone}, 
+                email = ${email}, 
+                address = ${address}, 
+                city = ${city}, 
+                about_us = ${about}, 
+                slot = ${slot}
+            WHERE doc_id = ${doc_id} 
+            RETURNING *
+        `;
+
+        if (!newProfile || newProfile.length === 0) {
+            return res.status(404).json({ success: false, message: "Doctor not found" });
+        }
+
+        const updatedDoctor = newProfile[0];
+
+        // Create new JWT
+        const token = jwt.sign(
+            {
+                doc_id: updatedDoctor.doc_id,
+                role: "doctor",
+                name: updatedDoctor.name,
+                specialization: updatedDoctor.specialization,
+                phone: updatedDoctor.phone,
+                email: updatedDoctor.email,
+                image: updatedDoctor.image,
+                about_us: updatedDoctor.about_us,
+                city: updatedDoctor.city,
+                address: updatedDoctor.address,
+                slot: updatedDoctor.slot
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // Set the cookie and send response in ONE go
+        res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: 20 * 60 * 1000
+        }).status(200).json({
+            success: true,
+            data: updatedDoctor,
+            message: "Profile Updated Successfully! JWT refreshed."
+        });
+
+    } catch (error) {
+        console.error("Error in Updating Profile", error);
+        res.status(500).json({ success: false, message: "Internal Server error" });
     }
-})
+});
+
 
 router.post('/patient/send_otp', async(req, res) => {
     let {pt_name, email} = req.body;
@@ -500,7 +651,7 @@ router.post('/patient/reset_password', async (req, res) => {
 });
 
 //routes for patient to get all doctors list
-router.get("/fetch_all",auth, isPatient, async(req,res)=>{
+router.get("/fetch_all", async(req,res)=>{
     try{
         const doctors = await sql`
             SELECT doc_id, name, specialization,phone, email, about_us,city, image FROM doctor
@@ -551,9 +702,9 @@ router.get("/my_day/:doc_id", async(req,res)=>{
     const{ doc_id } = req.params;
     try{ 
         const day_schedule = await sql `
-        SELECT start_time, end_time, pt_id, apt_id, status, name,date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date, (CURRENT_DATE-dob)/365 AS age,gender 
+        SELECT start_time, end_time, pt_id, apt_id, status, category,report, name, date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date, (CURRENT_DATE-dob)/365 AS age, gender 
         FROM appointment NATURAL JOIN patient
-        WHERE doc_id = ${doc_id}  ORDER BY date, start_time
+        WHERE doc_id = ${doc_id} AND status != 'Cancelled' ORDER BY date, start_time
         `;
         console.log("Schedule fetched Successfully",day_schedule);
         res.status(200).json({success:true, data:day_schedule});
@@ -563,34 +714,64 @@ router.get("/my_day/:doc_id", async(req,res)=>{
     }
 });
 
-router.patch("/doctor/reject_apt/:apt_id", auth, isDoctor, async(req,res)=>{
-    const {apt_id} = req.params;
-    try{
+router.patch("/doctor/reject_apt/:apt_id", auth, isDoctor, async (req, res) => {
+    const { apt_id } = req.params;
+    try {
         const rejected_apt = await sql`
-        UPDATE appointment SET status = 'Rejected' WHERE apt_id = ${apt_id} RETURNING *
+            UPDATE appointment SET status = 'Rejected' WHERE apt_id = ${apt_id} RETURNING *
         `;
-        console.log("Appointment Rejected Successfully",rejected_apt[0]);
-        res.status(200).json({success:true, data:rejected_apt[0]});
-    }catch(error){
-        console.log("Error in Rejecting Appointment",error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
+        const appointment = rejected_apt[0];
+        console.log("Appointment Rejected Successfully", appointment);
+        const patient = await sql`
+            SELECT email, name FROM patient WHERE pt_id = ${appointment.pt_id}
+        `;
+        const doctor = await sql`
+            SELECT name, email, phone FROM doctor WHERE doc_id = ${appointment.doc_id}
+        `;
+
+        const formattedDate = formatDate(appointment.date);
+        const formattedTime = formatTime(appointment.start_time);
+
+
+       const htmlEmail = `
+    <div style="font-family: Arial, sans-serif; padding: 20px; color: black;">
+        <h2 style="color: #27ae60;">Appointment Rejected</h2>
+        <p>Dear ${patient[0].name},</p>
+        <p>We regret to inform you that your appointment has been <strong>rejected</strong>.</p>
+        <h3>Appointment Details:</h3>
+        <ul>
+            <li><strong>Appointment ID:</strong> ${appointment.apt_id}</li>
+            <li><strong>Date:</strong> ${formattedDate}</li>
+            <li><strong>Time:</strong> ${formattedTime}</li>
+            <li><strong>Status:</strong> ${appointment.status}</li>
+            <li><strong>Category:</strong> ${appointment.category}</li>
+            <li><strong>Remarks:</strong> ${appointment.remarks || "N/A"}</li>
+        </ul>
+        <h3>Doctor's Contact Information:</h3>
+        <ul>
+            <li><strong>Email:</strong> ${doctor[0].email}</li>
+            <li><strong>Phone:</strong> ${doctor[0].phone}</li>
+        </ul>
+        <p>If you have any questions, please contact the clinic or your doctor directly.</p>
+        <p>Thank you.</p>
+    </div>
+`;
+
+
+        // Send email to patient
+        sendmail({
+            to: patient[0].email,
+            subject: "Your Appointment Has Been Rejected",
+            html: htmlEmail
+        });
+
+        res.status(200).json({ success: true, data: appointment });
+    } catch (error) {
+        console.log("Error in Rejecting Appointment", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
 
-//route to delete doctor account
-router.delete("/remove_acc/:id", async(req,res)=>{
-    const doctor_id = req.params.id;
-    try{ 
-        const deleted_doc = await sql `
-        DELETE FROM doctor WHERE doc_id = ${doctor_id}
-        RETURNING *`;
-        console.log("Your Account has been Deleted ", deleted_doc)
-        res.status(200).json({success:true, data:deleted_doc[0]});
-    } catch(error){
-        console.log("Error Deleting Account",error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
-    }
-});
 
 //route for pateint to get his profile details
 router.get('/pt_profile/:pt_id', auth, isPatient, async(req,res)=>{
@@ -607,30 +788,69 @@ router.get('/pt_profile/:pt_id', auth, isPatient, async(req,res)=>{
         res.status(500).json({success:false, message:"Server Error"});
     }
 })
+
 //route for patient to update his profile
-router.put("/pt_update/:pt_id",auth, isPatient, async(req,res)=>{
-    try{
-        const {pt_id} = req.params;
-        const {pt_name, gender, dob, phone, email} = req.body;
+router.put("/pt_update/:pt_id", auth, isPatient, async (req, res) => {
+    try {
+        const { pt_id } = req.params;
+        const { pt_name, gender, dob, phone, email } = req.body;
+
+        // Update profile in DB
         const updated_ptProfile = await sql`
-            UPDATE patient SET name = ${pt_name},gender = ${gender}, dob = ${dob},
-            phone = ${phone}, email = ${email} 
-            WHERE pt_id = ${pt_id} RETURNING *
+            UPDATE patient 
+            SET name = ${pt_name},
+                gender = ${gender}, 
+                dob = ${dob},
+                phone = ${phone}, 
+                email = ${email} 
+            WHERE pt_id = ${pt_id} 
+            RETURNING *
         `;
-        console.log("Profile Updated Successfully",updated_ptProfile[0]);
-        res.status(201).json({success:true, data:updated_ptProfile[0]});
-    }catch(error){
-        console.log("Error in Updating Profie",error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
+
+        if (!updated_ptProfile || updated_ptProfile.length === 0) {
+            return res.status(404).json({ success: false, message: "Patient not found" });
+        }
+
+        const updatedPatient = updated_ptProfile[0];
+
+        const token = jwt.sign(
+            {
+                pt_id: updatedPatient.pt_id,
+                role: "patient",
+                name: updatedPatient.name,
+                gender: updatedPatient.gender,
+                dob: updatedPatient.dob,
+                phone: updatedPatient.phone,
+                email: updatedPatient.email
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '20m' }
+        );
+
+        // Set the updated JWT in the cookie
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false, // set true if HTTPS
+            maxAge: 20 * 60 * 1000
+        }).status(200).json({
+            success: true,
+            data: updatedPatient,
+            message: "Profile Updated Successfully! JWT refreshed."
+        });
+
+    } catch (error) {
+        console.log("Error in Updating Profile", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-})
+});
+
 
 //route for patient to fetch his slots
 router.get("/pt_slot/:pt_id",auth, isPatient, async(req,res)=>{
     const {pt_id} = req.params;
     try{
         const apt_detail = await sql`
-            SELECT apt_id, name,start_time,status,date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date FROM appointment 
+            SELECT apt_id, name,category,report, start_time,status,date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date FROM appointment 
             NATURAL JOIN doctor WHERE pt_id = ${pt_id} AND date>=CURRENT_DATE order by date
         `;
         res.status(200).json({success:true, data:apt_detail});
@@ -657,26 +877,78 @@ router.delete("/delete_apt/:apt_id",auth, isPatient, async(req,res)=>{
 })
 
 //route for appointment booking
-router.post("/book_appointment/:doc_id/:pt_id",auth, isPatient, async(req,res)=>{
-    const{doc_id,pt_id} = req.params;
-    const{date,start_time,remarks} = req.body;
-        if(!doc_id || !pt_id){
-            return res.status(401).json({success:false, message:"Please provide all query parameters"});
-        }
-    try{
-        const appointment = await sql`
-        INSERT INTO appointment(doc_id, pt_id, date, start_time,remarks) 
-        VALUES(${doc_id},${pt_id},${date},${start_time},${remarks})
-        RETURNING *
-        `;
-        console.log("Appoitment Booked Successfully",appointment);
-        res.status(201).json({success:true,data:appointment[0], message:"Apointment Booked Successfully"});
+router.post("/book_appointment/:doc_id/:pt_id", auth, isPatient, async (req, res) => {
+    const { doc_id, pt_id } = req.params;
+    const { date, start_time, remarks, category } = req.body;
 
-    } catch(error){
-        console.log("Error in booking appoitment", error);
-        res.status(500).json({success:false, message:"Internal Server Error"});
+    if (!doc_id || !pt_id) {
+        return res.status(401).json({ success: false, message: "Please provide all query parameters" });
+    }
+
+    try {
+        const appointment = await sql`
+            INSERT INTO appointment(doc_id, pt_id, date, start_time, remarks, category) 
+            VALUES(${doc_id}, ${pt_id}, ${date}, ${start_time}, ${remarks}, ${category})
+            RETURNING *
+        `;
+
+        console.log("Appointment Booked Successfully", appointment);
+
+        // Fetch patient info (for email)
+        const patient = await sql`
+            SELECT name, email FROM patient WHERE pt_id = ${pt_id}
+        `;
+
+        // Fetch doctor info (for email)
+        const doctor = await sql`
+            SELECT name, email, phone, address, city, specialization FROM doctor WHERE doc_id = ${doc_id}
+        `;
+
+        const formattedDate = formatDate(appointment[0].date);
+        const formattedTime = formatTime(appointment[0].start_time);
+
+        // Prepare email HTML with inline CSS
+        const htmlEmail = `
+            <div style="font-family: Arial, sans-serif; padding: 20px; color: black;">
+                <h2 style="color: #27ae60;">Appointment Confirmation</h2>
+                <p>Dear ${patient[0].name},</p>
+                <p>Your appointment has been booked successfully. Here are the details:</p>
+                <h3>Appointment Details:</h3>
+                <ul>
+                    <li><strong>Appointment ID:</strong> ${appointment[0].apt_id}</li>
+                    <li><strong>Date:</strong> ${formattedDate}</li>
+                    <li><strong>Time:</strong> ${formattedTime}</li>
+                    <li><strong>Category (Type):</strong> ${appointment[0].category}</li>
+                    <li><strong>Remarks:</strong> ${appointment[0].remarks || "N/A"}</li>
+                </ul>
+                <h3>Doctor Details:</h3>
+                <ul>
+                    <li><strong>Name:</strong> Dr. ${doctor[0].name}</li>
+                    <li><strong>Specialization:</strong> ${doctor[0].specialization}</li>
+                    <li><strong>Contact Email:</strong> ${doctor[0].email}</li>
+                    <li><strong>Phone:</strong> ${doctor[0].phone}</li>
+                    <li><strong>Address:</strong> ${doctor[0].address}</li>
+                    <li><strong>City:</strong> ${doctor[0].city}</li>
+                </ul>
+                <p>If you have any questions, please contact the clinic or your doctor directly.</p>
+                <p>Thank you.</p>
+            </div>
+        `;
+        // Send email to patient
+        sendmail({
+            to: patient[0].email,
+            subject: "Appointment Confirmation - DocSlot",
+            html: htmlEmail
+        });
+
+        res.status(201).json({ success: true, data: appointment[0], message: "Appointment Booked Successfully" });
+
+    } catch (error) {
+        console.log("Error in booking appointment", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+
 
 router.get("/busy_slots/:date/:doc_id", async(req,res)=>{
     const {date, doc_id} = req.params;

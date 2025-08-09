@@ -6,7 +6,7 @@ import { useAuth } from '../ContextAPI/AuthContext';
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
-function PtProfileEdit({pt_profile, setIsEditing}) {
+function PtProfileEdit({pt_profile, setIsEditing, fetchUser}) {
     const {isLogin, setIsLogin} = useAuth();
     const [pt_name, setPtName] = useState(pt_profile.name);
     const [gender, setGender] = useState(pt_profile.gender);
@@ -22,19 +22,19 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
         try {
             const res = await axios.put(`${BASE_URL}/api/pt_update/${pt_id}`, {pt_name,gender,dob,phone,email});
             if(res.data.success){
-                //  toast.success("Profile Updated Successfully!",{
-                //   autoClose: 2000,
-                //  hideProgressBar: false,
-                //  closeOnClick: true,
-                //  pauseOnHover: true,
-                //  draggable: true,
-
-                // })
+                fetchUser();  
                 setIsEditing(false);
-                setIsLogin(false);
-                handleLogout();
+                toast.success(
+                    "Profile Updated successfully!",
+                    {
+                      autoClose: 2000,
+                     hideProgressBar: false,
+                     closeOnClick: true,
+                     pauseOnHover: true,
+                      draggable: true,
+                })
             }
-        } catch (error) {
+        } catch(error) {
               toast.error("Profile Updated failed!",{
                 autoClose: 2000,
                  hideProgressBar: false,
@@ -84,73 +84,92 @@ function PtProfileEdit({pt_profile, setIsEditing}) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" >
-            <div className="flex flex-col min-h-[400px] min-w-[420px] bg-white rounded-md p-4 shadow-sm  text-center items-center">
-            <div className="flex items-center justify-between w-full mb-1 relative">
-                <h1 className="mx-auto text-xl font-bold">Manage Your Profile</h1>
-                <button 
-                    onClick={() => setIsEditing(false)} 
-                    className="absolute right-0 text-xl font-bold">×
-                </button>
-            </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+  <div className="flex flex-col w-full max-w-lg bg-white rounded-md p-8 shadow-sm  items-center">
+    {/* Header */}
+    <div className="flex items-center justify-between w-full mb-1 relative">
+      <h1 className="mx-auto text-xl font-bold">Manage Your Profile</h1>
+      <button
+        onClick={() => setIsEditing(false)}
+        className="absolute right-0 text-xl font-bold"
+      >
+        ×
+      </button>
+    </div>
 
-            <div className="flex flex-col items-start justify-center gap-4 mt-4 text-start">
-                <form className="flex flex-col gap-0.5">
-                <label className="block mb-1 text-sm font-small text-gray-700">Name</label>
-                <input
-                    type="text"
-                    className="w-[355px] p-2 border border-gray-300 rounded-md mb-4"
-                    placeholder="Enter your name" 
-                    defaultValue={pt_profile.name}
-                    onChange={(e) => setPtName(e.target.value)}
-                />
-                <div className="flex gap-4">
-                    <div>
-                    <label className="block mb-1 text-sm font-small text-gray-700">Date of Birth</label>
-                     <input
-                    type="date"
-                    className="w-[170px] p-1.5 border border-gray-300 rounded-md mb-4"
-                    defaultValue = {pt_profile.dob ? pt_profile.dob.split('T')[0] : ''}
-                    onChange={(e) => setDob(e.target.value)}
-                    />
-                    </div>
-                    <div>
-                        <label className="block mb-1 text-sm font-small text-gray-700">Gender</label>
-                     <input
-                    type="text"
-                    placeholder="Enter Your Gender"
-                    defaultValue={pt_profile.gender}
-                    className="w-[170px] p-2 border border-gray-300 rounded-md mb-4"
-                    onChange={(e) => setGender(e.target.value)}
-                    />
-                    </div>    
-                </div>
-                    <label className="block mb-1 text-sm text-gray-700">Contact Number</label>
-                     <input
-                    type="text"
-                    placeholder="Contact Number"
-                    defaultValue={pt_profile.phone}
-                    className="w-[355px] p-2 border border-gray-300 rounded-md mb-4"
-                    onChange={(e) => setPhone(e.target.value)}
-                    />
-                    <label className="block mb-1 text-sm text-gray-700">Email Id</label>
-                     <input
-                    type="email"
-                    placeholder="Email Id"
-                    defaultValue={pt_profile.email}
-                    disabled
-                    className="w-[355px] p-2 border border-gray-300 rounded-md mb-4"
-                    onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <button className="w-full bg-blue-600 text-white p-2 rounded-md mb-4 hover:bg-blue-700 transition duration-200"
-                    
-                    onClick={handleSubmit}>
-                        Update Details
-                    </button>
-            </form>
-            </div>
-             </div>
+    {/* Form */}
+    <div className="flex flex-col items-start justify-center gap-4 mt-4 w-full">
+      <form className="flex flex-col gap-2 w-full">
+        {/* Name */}
+        <label className="text-sm font-medium text-gray-700">Name</label>
+        <input
+          type="text"
+          className="w-full p-2 border border-gray-300 rounded-md"
+          placeholder="Enter your name"
+          defaultValue={pt_profile.name}
+          maxLength={25}
+          onChange={(e) => setPtName(e.target.value)}
+        />
+
+        {/* Date of Birth & Gender */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-gray-700">Date of Birth</label>
+            <input
+              type="date"
+              className="w-full p-2 border border-gray-300 rounded-md"
+              defaultValue={pt_profile.dob ? pt_profile.dob.split('T')[0] : ''}
+              max={new Date().toISOString().split("T")[0]} // Set max value to today
+              onChange={(e) => setDob(e.target.value)}
+            />
+          </div>
+          <div className="flex-1">
+            <label className="text-sm font-medium text-gray-700">Gender</label>
+            <input
+              type="text"
+              placeholder="Enter Your Gender"
+              maxLength={6}
+              defaultValue={pt_profile.gender}
+              className="w-full p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setGender(e.target.value)}
+            />
+          </div>
         </div>
+
+        {/* Phone */}
+        <label className="text-sm font-medium text-gray-700">Contact Number</label>
+        <input
+          type="text"
+          placeholder="Contact Number"
+          defaultValue={pt_profile.phone}
+          maxLength={10}
+          className="w-full p-2 border border-gray-300 rounded-md"
+          onChange={(e) => setPhone(e.target.value)}
+        />
+
+        {/* Email */}
+        <label className="text-sm font-medium text-gray-700">Email Id</label>
+        <input
+          type="email"
+          placeholder="Email Id"
+          defaultValue={pt_profile.email}
+          disabled
+          className="w-full p-2 border border-gray-300 rounded-md bg-gray-100"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        {/* Submit */}
+        <button
+          className="w-full mt-4 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200"
+          onClick={handleSubmit}
+        >
+          Update Details
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
     )
 }
 

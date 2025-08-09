@@ -2,13 +2,14 @@ import axios from "axios";
 import { useAuth } from "../ContextAPI/AuthContext";
 import { useState, useEffect, use } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 const EditDocProfile = () => {
   const allTimes = Array.from({ length: 12 }, (_, i) => 8 + i); 
   const [endTimeOption, setEndTimeOption] = useState([]);
-  const {user,isLogin,setIsLogin} = useAuth();
+  const {user,isLogin,setIsLogin,fetchUser} = useAuth();
   const doc_id = user?.doc_id;
   const [photo, setPhoto] = useState("");
   const [slotTime, setSlotTime] = useState("");
@@ -88,28 +89,42 @@ const EditDocProfile = () => {
       const res = await axios.put(`${BASE_URL}/api/doctor/update/${user.doc_id}`,{formData:formData});
       if(res.data.success){
         console.log("Profile Updated Successfully",res.data);
-        alert(res.data.message);
-        handleLogout();
+        toast.success("Profile Updated Successfully!", {
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        fetchUser();
+        navigate("/doc_profile");
       }
     }catch(error){
       console.log(error);
+      toast.error(`${error.response.data.message}`, {
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
     
   }
-  const handleLogout = async() =>{
-          try{
-              const res = await axios.post(`${BASE_URL}/api/doctor/logout`);
-              if(res.data.success){
-                  alert("Please Login Again")
-                  setIsLogin(false);
-                  navigate("/doc_home");
-              }else{
-                   alert("Error while logging out")
-              }
-          }catch(error){
-              alert("Error from catch block")
-          }
-      }
+  // const handleLogout = async() =>{
+  //         try{
+  //             const res = await axios.post(`${BASE_URL}/api/doctor/logout`);
+  //             if(res.data.success){
+  //                 alert("Please Login Again")
+  //                 setIsLogin(false);
+  //                 navigate("/doc_home");
+  //             }else{
+  //                  alert("Error while logging out")
+  //             }
+  //         }catch(error){
+  //             alert("Error from catch block")
+  //         }
+  //     }
   const getMaxLength = (field) => {
       switch (field) {
         case "Name":
