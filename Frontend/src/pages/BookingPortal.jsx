@@ -16,7 +16,8 @@ function BookingPortal() {
     const { doc_id } = useParams();
     const [doctor, fetchDoctor] = useState({});
     const [aptDetails, setAppointment] = useState({});
-
+    const [bookingPending, setBookingPending] = useState(false);
+    
     const [slotList, setSlotList] = useState([]);
     const [freeSlots, setFreeSlots] = useState([]);
     const [busy_slots, setBusySlots] = useState([]);
@@ -69,7 +70,7 @@ useEffect(() => {
     const now = new Date();
     const todayStr = now.toISOString().slice(0, 10); 
     const currentTime = now.toTimeString().slice(0, 5); 
-
+    
     const busySlotList = busy_slots.map(slot => slot.start_time.slice(0, -3));
 
     const filteredSlots = slotList.filter(slot => {
@@ -118,6 +119,7 @@ useEffect(() => {
     
 
     const handleBooking = async (event) => {
+        setBookingPending(true);
         event.preventDefault();
         try{
             console.log(start_time, date);
@@ -154,6 +156,7 @@ useEffect(() => {
 
                 })
         }
+        setBookingPending(false);
     }
 
      function manageTime(time) {
@@ -259,6 +262,7 @@ useEffect(() => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200"
+            disabled={bookingPending}
           >
             Book Appointment
           </button>

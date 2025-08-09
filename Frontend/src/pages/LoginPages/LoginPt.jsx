@@ -19,6 +19,7 @@ const LoginPt = () => {
     newPassword: '',
     confirmPassword:''
   });
+  const [loginPending, setLoginPending] = useState(false);
 
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
@@ -47,6 +48,7 @@ const LoginPt = () => {
       
 
     const handleLogin = async (event) => {
+      setLoginPending(true);
         event.preventDefault(); 
         try {
             const res = await axios.post(`${BASE_URL}/api/patient/login`, { email:user.email, password:user.password });
@@ -80,6 +82,7 @@ const LoginPt = () => {
                  draggable: true,
                 })
         }
+        setLoginPending(false);
     };
 
     const handleForgotPassword = async (event) => {
@@ -157,7 +160,8 @@ const LoginPt = () => {
 
                 })
       }
-     
+      
+
     }
 
   return (
@@ -195,6 +199,7 @@ const LoginPt = () => {
       <button
         type="submit"
         className="w-full max-w-sm text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-md text-sm px-5 py-2.5"
+        disabled={loginPending}
       >
         Log In
       </button>

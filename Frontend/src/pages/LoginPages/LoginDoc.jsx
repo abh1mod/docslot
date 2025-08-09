@@ -11,6 +11,7 @@ const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000
 const LoginDoc = () => {
   const {fetchUser} = useAuth();
   const[ forgotPass, setForgotPass] = useState(false);
+  const [loginPending, setLoginPending] = useState(false);
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -45,6 +46,7 @@ const LoginDoc = () => {
     
 
     const handleLogin = async (event) => {
+      setLoginPending(true);
         event.preventDefault(); 
         try {
             const res = await axios.post(`${BASE_URL}/api/doctor/login`, { email:user.email, password:user.password });
@@ -83,6 +85,7 @@ const LoginDoc = () => {
                 })
             console.error(error.response.data.message);
         }
+        setLoginPending(false);
     };
 
     const handleForgotPassword = async (event) => {
@@ -202,6 +205,7 @@ const LoginDoc = () => {
       <button
         type="submit"
         className="w-full mx-auto max-w-sm text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-md text-sm px-5 py-2.5"
+        disabled={loginPending}
       >
         Log In
       </button>
@@ -286,7 +290,7 @@ const LoginDoc = () => {
       <button
         type="submit"
         disabled={mismatch}
-        className="mx-auto w-fit text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-5 py-2.5"
+        className="mx-auto w-full max-w-sm text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-md text-sm px-5 py-2.5"
       >
         Reset Password
       </button>

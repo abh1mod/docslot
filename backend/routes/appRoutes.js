@@ -209,12 +209,12 @@ router.post('/doctor/login', async(req, res)=>{
         
             process.env.JWT_SECRET,
 
-            { expiresIn: '20m' }
+            { expiresIn: '7d' }
         );
 
         const options = {
             httpOnly: true, 
-            maxAge: 20 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         };
         res.cookie("token", token,options).status(200).json({
             success:true, 
@@ -433,13 +433,13 @@ router.put('/doctor/update/:doc_id', async (req, res) => {
                 slot: updatedDoctor.slot
             },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '7d' }
         );
 
         // Set the cookie and send response in ONE go
         res.cookie("token", token, {
             httpOnly: true,
-            maxAge: 20 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         }).status(200).json({
             success: true,
             data: updatedDoctor,
@@ -556,13 +556,13 @@ router.post('/patient/login', async(req, res)=>{
         
             process.env.JWT_SECRET,
 
-            { expiresIn: '20m' }
+            { expiresIn: '7d' }
         );
 
         const options = {
             httpOnly: true,
-            secure: false,       
-            maxAge: 20 * 60 * 1000
+            secure: false,
+            maxAge: 7 * 24 * 60 * 60 * 1000
         };
         res.cookie("token", token, options).status(200).json({
             success:true, 
@@ -824,14 +824,14 @@ router.put("/pt_update/:pt_id", auth, isPatient, async (req, res) => {
                 email: updatedPatient.email
             },
             process.env.JWT_SECRET,
-            { expiresIn: '20m' }
+            { expiresIn: '7d' }
         );
 
         // Set the updated JWT in the cookie
         res.cookie("token", token, {
             httpOnly: true,
             secure: false, // set true if HTTPS
-            maxAge: 20 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         }).status(200).json({
             success: true,
             data: updatedPatient,
