@@ -28,19 +28,6 @@ DocSlot is a healthcare appointment booking platform developed as a learning pro
 
 **Additional**: Nodemailer 7.0.3, Morgan 1.10.0, Axios 1.9.0
 
-## Environment Variables
-
-**Server**: `PORT=3000`, `NODE_ENV=development` - Server configuration and environment mode
-
-**Database**: `DATABASE_URL`, `NEON_DATABASE_URL` - PostgreSQL connection strings for local and cloud databases
-
-**Redis**: `REDIS_URL`, `UPSTASH_REDIS_URL` - Redis connection for caching and session management
-
-**JWT**: `JWT_SECRET`, `JWT_EXPIRES_IN=7d` - Authentication token configuration
-
-**Cloudinary**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` - Cloud file storage configuration
-
-**Email**: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` - Email service configuration for notifications
 
 ## Usage
 
