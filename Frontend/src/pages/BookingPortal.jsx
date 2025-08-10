@@ -144,6 +144,7 @@ useEffect(() => {
                  draggable: true,
 
                 })
+                setBookingPending(false);
             }
         }
         catch(error){
@@ -155,8 +156,9 @@ useEffect(() => {
                  draggable: true,
 
                 })
+                setBookingPending(false);
         }
-        setBookingPending(false);
+        
     }
 
      function manageTime(time) {

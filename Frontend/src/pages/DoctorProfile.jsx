@@ -87,7 +87,8 @@ function DoctorProfile() {
   }, [user?.doc_id, isLogin]);
 
   const upcomingAppointments = appointments.filter((a) => (a.date || "").slice(0, 10) >= today);
-  const countToday = upcomingAppointments.filter((a) => (a.date || "").slice(0, 10) === today);
+  const countToday = upcomingAppointments.filter((a) => (a.date || "").slice(0, 10) === today && a.status === "Confirmed");
+
   const pastAppointments = appointments.filter((a) => (a.date || "").slice(0, 10) < today);
 
   function formatDate(dateStr) {

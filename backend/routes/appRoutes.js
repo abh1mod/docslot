@@ -45,6 +45,21 @@ function calculateAge(dob) {
   return age;
 }
 
+async function isLimitReached(email) {
+  const key = `freq:${email}`;
+  const frequency = await redisClient.get(key);
+  const count = frequency ? parseInt(frequency) : 0;
+  if (count >= 8) {
+    console.log("Limit reached");
+    return true;  
+  }
+  const newCount = await redisClient.incr(key);
+  if (newCount === 1) {
+    await redisClient.expire(key, 24 * 60 * 60); 
+  }
+  return false; 
+}
+
 cloudinary.config({ 
         cloud_name: 'dahtedx9c', 
         api_key: process.env.CLOUDINARY_KEY, 
@@ -372,13 +387,15 @@ router.post('/patient/upload_report/:apt_id', async (req, res) => {
         </div>
         `;
 
-
-
-        sendmail({
+        if(await isLimitReached(patient[0].email) === false){
+            sendmail({
             to: doctor[0].email,
             subject: "New Patient Report Uploaded",
             html: htmlEmail
         });
+        }
+
+
 
         res.status(200).json({ success: true, data: report_photo[0].report });
 
@@ -757,13 +774,14 @@ router.patch("/doctor/reject_apt/:apt_id", auth, isDoctor, async (req, res) => {
     </div>
 `;
 
-
-        // Send email to patient
-        sendmail({
-            to: patient[0].email,
-            subject: "Your Appointment Has Been Rejected",
-            html: htmlEmail
-        });
+        if(await isLimitReached(doctor[0].email) === false){
+            // Send email to patient
+            sendmail({
+                to: patient[0].email,
+                subject: "Your Appointment Has Been Rejected",
+                html: htmlEmail
+            });
+        }
 
         res.status(200).json({ success: true, data: appointment });
     } catch (error) {
@@ -934,12 +952,14 @@ router.post("/book_appointment/:doc_id/:pt_id", auth, isPatient, async (req, res
                 <p>Thank you.</p>
             </div>
         `;
-        // Send email to patient
-        sendmail({
-            to: patient[0].email,
-            subject: "Appointment Confirmation - DocSlot",
-            html: htmlEmail
-        });
+ 
+        if (await isLimitReached(patient[0].email) === false) {
+            sendmail({
+                to: patient[0].email,
+                subject: "Appointment Confirmation - DocSlot",
+                html: htmlEmail
+            });
+        }
 
         res.status(201).json({ success: true, data: appointment[0], message: "Appointment Booked Successfully" });
 

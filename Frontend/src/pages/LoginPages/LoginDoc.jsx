@@ -73,6 +73,7 @@ const LoginDoc = () => {
 
                 })
                 console.error(res.data.message);
+                setLoginPending(false);
             }
         } catch (error) {
            toast.error(`${error.response.data.message}`,{
@@ -84,8 +85,9 @@ const LoginDoc = () => {
 
                 })
             console.error(error.response.data.message);
+            setLoginPending(false);
         }
-        setLoginPending(false);
+        
     };
 
     const handleForgotPassword = async (event) => {
@@ -145,7 +147,7 @@ const LoginDoc = () => {
           // window.location.reload(false);
          }
          else{
-            toast.error("Password reset failed!",{
+            toast.error(`${error.response.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
@@ -155,7 +157,7 @@ const LoginDoc = () => {
                 })
          }
       } catch(error){
-        toast.error("Error while action!",{
+        toast.error(`${error.response.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,

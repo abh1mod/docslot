@@ -71,6 +71,7 @@ const LoginPt = () => {
                  draggable: true,
                 })
                 console.error(res.data.message);
+                setLoginPending(false);
             }
 
         } catch (error) {
@@ -81,8 +82,8 @@ const LoginPt = () => {
                  pauseOnHover: true,
                  draggable: true,
                 })
+                setLoginPending(false);
         }
-        setLoginPending(false);
     };
 
     const handleForgotPassword = async (event) => {
@@ -112,7 +113,7 @@ const LoginPt = () => {
             
             }
         } catch (error) {
-             toast.error("Error While Action!",{
+             toast.error(`${error.response.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
@@ -151,7 +152,7 @@ const LoginPt = () => {
                 })
          }
       } catch(error){
-        toast.error("Error while Action!",{
+        toast.error(`${error.response.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
