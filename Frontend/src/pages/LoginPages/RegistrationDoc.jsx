@@ -49,8 +49,22 @@ const RegistrationDoc = () => {
             console.log(res.data.success);
             if (res.data.success) {
                 setOtpSent(true);
+                toast.success("OTP sent to your email!", {
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
             } else {
                 console.log("Error in sending OTP");
+                toast.error(`${res.data.message}`, {
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
                 console.error(res.data.message);
             }
         } catch (error) {

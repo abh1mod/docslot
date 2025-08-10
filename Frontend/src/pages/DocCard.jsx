@@ -5,7 +5,7 @@ export default function DocCard({events}) {
       {/* Profile Image */}
       <div className="flex justify-center">
         <img
-          src={image}
+          src={!image ? "https://res.cloudinary.com/dahtedx9c/image/upload/v1753246193/doctor_images/iurgcqfmt9xsydjrpbho.png" : image}
           alt="Doctor"
           className="w-28 h-28 rounded-full border-4 object-cover"
         />

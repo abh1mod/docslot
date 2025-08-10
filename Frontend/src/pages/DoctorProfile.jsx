@@ -152,7 +152,7 @@ function DoctorProfile() {
             {/* Left: Profile */}
             <div className="md:w-1/3 border-b md:border-b-0 md:border-r border-gray-200 p-6 flex flex-col items-center">
               <img
-                src={doctor?.image || user?.image || "https://via.placeholder.com/150"}
+                src={doctor?.image || user?.image || "https://res.cloudinary.com/dahtedx9c/image/upload/v1753246193/doctor_images/iurgcqfmt9xsydjrpbho.png"}
                 alt="Doctor profile"
                 className="rounded-full w-36 h-36 object-cover mb-4"
               />

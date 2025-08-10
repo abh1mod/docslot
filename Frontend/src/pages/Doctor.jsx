@@ -23,11 +23,12 @@ const Doctor = () => {
   const [showSpecDropdown, setShowSpecDropdown] = useState(false);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
 
+  const [Specialization, setSpecializations] = useState([]); 
+  const [City, setCities] = useState([]);
+
   const specRef = useRef(null);
   const cityRef = useRef(null);
 
-  const Specialization = ["Gastroenterology", "Neurologist", "Cardiologist", "Surgeon", "Dermatology"];
-  const City = ["Mathura", "Kota", "Delhi", "Mumbai", "Bangalore", "Hyderabad", "Pune"];
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -45,7 +46,23 @@ const Doctor = () => {
     fetchDoctors();
   }, []);
 
-  // Close dropdowns on outside click
+  
+  useEffect(() => {
+    const fetchFilterAttributes = async () => {
+      try {
+        const result = await axios.get(`${BASE_URL}/api/patient/filter_attributes`);
+        if (result.data.success) {
+          setSpecializations(result.data.data.specializations);
+          setCities(result.data.data.cities);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    fetchFilterAttributes();
+  }, []);
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (specRef.current && !specRef.current.contains(e.target)) {
@@ -59,12 +76,14 @@ const Doctor = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Filtered doctor list
   const filteredDoctors = doctors.filter((doc) => {
     const specMatch = filterspec ? doc.specialization?.toLowerCase() === filterspec.toLowerCase() : true;
     const cityMatch = filterspeccity ? doc.city?.toLowerCase() === filterspeccity.toLowerCase() : true;
     return specMatch && cityMatch;
   });
 
+  // Reset filters
   const clearFilters = () => {
     setFilterspec("");
     setFilterspeccity("");
@@ -72,6 +91,7 @@ const Doctor = () => {
     setSearchcity("");
   };
 
+  // Filter dropdown values based on search text
   const filteredSpecs = search
     ? Specialization.filter((item) => item.toLowerCase().includes(search.toLowerCase()))
     : Specialization;
@@ -81,6 +101,8 @@ const Doctor = () => {
     : City;
 
   // if (!isLogin) return <LoginPt />;
+
+
 
   return (
     <div className="flex flex-col align-items-center  p-4 bg-gray-50 min-h-screen ">
@@ -115,7 +137,7 @@ const Doctor = () => {
               className="cursor-pointer hover:bg-blue-100 px-3 py-2 text-gray-700 
                          transition-colors duration-150"
             >
-              {item}
+              {item.charAt(0).toUpperCase() + item.slice(1)}
             </div>
           ))
         ) : (
@@ -166,7 +188,7 @@ const Doctor = () => {
               className="cursor-pointer hover:bg-blue-100 px-3 py-2 text-gray-700 
                          transition-colors duration-150"
             >
-              {item}
+              {item.charAt(0).toUpperCase() + item.slice(1)}
             </div>
           ))
         ) : (
@@ -204,7 +226,7 @@ const Doctor = () => {
       {loading ? (
         <Loading />
       ) : filteredDoctors.length === 0 ? (
-        <p>No doctors found.</p>
+        <p>No Result Found.</p>
       ) : (
         <div className="w-full flex justify-center">
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">

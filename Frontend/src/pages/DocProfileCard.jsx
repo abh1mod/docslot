@@ -1,6 +1,6 @@
 import React from 'react';
 
-const defaultPicture = "https://res.cloudinary.com/dahtedx9c/image/upload/v1753246428/doctor_images/iohuqxt9x9co0pvvkihd.gif";
+const defaultPicture = "https://res.cloudinary.com/dahtedx9c/image/upload/v1753246193/doctor_images/iurgcqfmt9xsydjrpbho.png";
 
 const DocProfileCard = ({ events }) => {
   const { name, specialization, phone, email, image, about_us } = events;
