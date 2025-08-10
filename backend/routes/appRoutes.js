@@ -186,8 +186,8 @@ router.post('/doctor/verify_email', async (req, res) => {
     try{
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await sql`
-            INSERT INTO doctor(name,email,hashedpassword) 
-            VALUES(${doc_name}, ${email}, ${hashedPassword}) RETURNING *
+            INSERT INTO doctor(name,email,hashedpassword,specialization,phone,city) 
+            VALUES(${doc_name}, ${email}, ${hashedPassword}, 'Others', 'NA', 'Not Mentioned') RETURNING *
         `;
        
         sendmail({to: email, subject: 'Registration Successfull', html:`<div>
@@ -1016,5 +1016,35 @@ router.get("/patient/slot_duration/:doc_id",auth, isPatient, async(req,res)=>{
         res.status(500).json({success:false, message:"Internal Server Error"});
     }
 })
+
+router.get("/patient/filter_attributes", async (req, res) => {
+  try {
+    const cities = await sql`
+      SELECT DISTINCT LOWER(city) AS city
+      FROM doctor
+      WHERE city IS NOT NULL AND city <> ''
+      ORDER BY city
+    `;
+
+    const specializations = await sql`
+      SELECT DISTINCT LOWER(specialization) AS specialization
+      FROM doctor
+      WHERE specialization IS NOT NULL AND specialization <> ''
+      ORDER BY specialization
+    `;
+
+    res.status(200).json({
+        success: true,
+        data: {
+            cities: cities.map(row => row.city),
+        specializations: specializations.map(row => row.specialization)
+      }
+    });
+  } catch (error) {
+    console.error("Error in fetching unique data", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
 
 export default router;
