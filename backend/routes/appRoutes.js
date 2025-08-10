@@ -142,11 +142,9 @@ router.post('/doctor/send_otp', async(req, res) => {
     try{
         const existed = await sql`SELECT * FROM doctor WHERE email = ${email}`;
         if (existed.length>0) {
-            console.log("User Already Exists, Please Proceed For Login");
             return res.status(400).json({
                 success: false,
-                message: 'User Already Exists, Please Proceed For Login',
-                data:existed[0]
+                message: 'User Already Exists, Please Proceed For Login'
             });
         }    
         const otpSent = Math.floor(100000 + Math.random()*900000).toString();
@@ -495,11 +493,9 @@ router.post('/patient/send_otp', async(req, res) => {
     try{
         const existed = await sql`SELECT * FROM patient WHERE email = ${email}`;
         if (existed.length>0) {
-            console.log("User Already Exists, Please Proceed For Login");
             return res.status(400).json({
                 success: false,
-                message: 'User Already Exists, Please Proceed For Login',
-                data:existed[0]
+                message: 'User Already Exists, Please Proceed For Login'
             });
         }    
         const otpSent = Math.floor(100000 + Math.random()*900000).toString();
@@ -574,7 +570,7 @@ router.post('/patient/login', async(req, res)=>{
         if(await bcrypt.compare(password, user[0].hashedpassword) === false){    
             return res.status(401).json({success:false, message:"Please Check Your Password"});
         }
-        // user[0].hashedpassword = undefined;
+        user[0].hashedpassword = undefined;
 
         const token = jwt.sign({ 
             pt_id: user[0].pt_id,
@@ -712,13 +708,14 @@ router.get("/patient/fetch_slot/:doc_id", auth, isPatient, async(req, res)=>{
     }
 });
 
-//READ route for doctor to check his profile 
-router.get('/doc_profile/:doc_id', auth, async(req,res)=>{
+
+router.get('/doc_profile/:doc_id', async(req,res)=>{
     try{
         const {doc_id} = req.params;
         const doc = await sql`
             SELECT * FROM doctor WHERE doc_id = ${doc_id}    
         `;
+        doc[0].hashedpassword = undefined;
         console.log("Fetched Doctor Profile",doc);
         res.status(200).json({success:true,data:doc[0]});
     }
@@ -813,7 +810,7 @@ router.get('/pt_profile/:pt_id', auth, isPatient, async(req,res)=>{
         const pt = await sql`
             SELECT * FROM patient WHERE pt_id = ${pt_id}    
         `;
-        console.log("Fetched Patient Profile",);
+        pt[0].hashedpassword = undefined;
         res.status(200).json({success:true,data:pt[0]});
     }
     catch(error){
