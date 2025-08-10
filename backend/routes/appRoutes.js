@@ -734,9 +734,9 @@ router.get("/my_day/:doc_id", auth, isDoctor, async(req,res)=>{
     const{ doc_id } = req.params;
     try{ 
         const day_schedule = await sql `
-        SELECT start_time, end_time, pt_id, apt_id, status, category,report, name, date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date, (CURRENT_DATE-dob)/365 AS age, gender 
+        SELECT start_time, end_time, pt_id, apt_id, status, category,report,phone ,name, date::timestamptz AT TIME ZONE 'Asia/Kolkata' as date, (CURRENT_DATE-dob)/365 AS age, gender 
         FROM appointment NATURAL JOIN patient
-        WHERE doc_id = ${doc_id} AND status != 'Cancelled' ORDER BY date, start_time
+        WHERE doc_id = ${doc_id} AND status != 'Cancelled' ORDER BY status, date, start_time
         `;
         console.log("Schedule fetched Successfully",day_schedule);
         res.status(200).json({success:true, data:day_schedule});
