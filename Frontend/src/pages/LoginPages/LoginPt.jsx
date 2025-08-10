@@ -54,6 +54,7 @@ const LoginPt = () => {
             const res = await axios.post(`${BASE_URL}/api/patient/login`, { email:user.email, password:user.password });
             console.log(res.data.success);
             if (res.data.success) {
+              fetchUser();
                 toast.success("Login Successfully!",{
                   autoClose: 2000,
                  hideProgressBar: false,
@@ -61,7 +62,6 @@ const LoginPt = () => {
                  pauseOnHover: true,
                  draggable: true,
                 })
-                fetchUser();
             } else {
                 toast.error("Error while Login!",{
                   autoClose: 2000,
