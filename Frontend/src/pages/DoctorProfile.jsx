@@ -164,16 +164,16 @@ function DoctorProfile() {
                 <p>{doctor?.city || "—"}</p>
               </div>
 
-              <div className="mt-6 w-full flex flex-col gap-3">
+              <div className="mt-6 w-full flex flex-col items-center gap-3">
                 <button
                   onClick={() => navigate(`/edit_doc/${user?.doc_id}`)}
-                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                  className="max-w-xs w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
                 >
                   Manage Profile
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="w-full bg-gray-200 py-2 rounded-md hover:bg-gray-300"
+                  className="max-w-xs w-full bg-gray-200 py-2 rounded-md hover:bg-gray-300"
                 >
                   Logout
                 </button>
