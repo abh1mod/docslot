@@ -208,10 +208,38 @@ function DoctorProfile() {
                   onClick={() => setUpcomingOpen((v) => !v)}
                   className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-md"
                 >
+                  <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="font-medium">Upcoming Appointments</span>
                     <span className="text-sm text-gray-500">({upcomingAppointments.length})</span>
                   </div>
+
+                  <div
+                    title="refresh"
+                    onClick={(e) => {
+                      e.stopPropagation();   
+                      loadAppointments();
+                    }}
+                    className="p-1 rounded hover:bg-gray-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {/* Simple reload icon using SVG */}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 4v5h.582M20 20v-5h-.581M5.11 9a7 7 0 0113.78 0M19.41 15a7 7 0 01-13.78 0"
+                      />
+                    </svg>
+                  </div>
+                </div>
                   {upcomingOpen ? <FaArrowCircleUp /> : <FaArrowAltCircleDown />}
                 </button>
 
