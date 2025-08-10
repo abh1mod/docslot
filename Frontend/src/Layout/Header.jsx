@@ -116,9 +116,7 @@ const Header = () => {
             <NavLink to={currentRole === "doctor" ? "/doc_home" : "/home"} className="nav-link">Home</NavLink>
             <NavLink to="/about" className="nav-link">About</NavLink>
 
-            {currentRole === "doctor" ? (
-              <NavLink to="/doc_profile" className="nav-link">Dashboard</NavLink>
-            ) : (
+            {currentRole === "patient" && (
               <NavLink to="/doctor" className="nav-link">Book Appointment</NavLink>
             )}
 
@@ -201,9 +199,7 @@ const Header = () => {
             <NavLink to={currentRole === "doctor" ? "/doc_home" : "/home"} className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Home</NavLink>
             <NavLink to="/about" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>About</NavLink>
 
-            {currentRole === "doctor" ? (
-              <NavLink to="/doc_profile" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Dashboard</NavLink>
-            ) : (
+            {currentRole === "patient" && (
               <NavLink to="/doctor" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Book Appointment</NavLink>
             )}
 

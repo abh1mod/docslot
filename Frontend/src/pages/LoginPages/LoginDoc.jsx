@@ -171,8 +171,8 @@ const LoginDoc = () => {
 
 
    //main container
-    <div className="flex justify-center items-center h-[85vh] p-2 bg-white sm:bg-gray-100">
-  <div className="sm:min-w-[26%] min-h-[84%] min-w-[80%] bg-white sm:shadow-lg flex flex-col justify-center rounded-lg  gap-2 sm:p-8 p-0 text-center">
+  <div className="flex justify-center items-start min-h-[85vh] py-[4%] bg-white sm:bg-gray-100">
+  <div className="xs:min-w-[25%] md:min-w-[25%] py-20  sm:px-10 sm:min-w-[70%] min-w-[80%]  bg-white sm:shadow-lg flex flex-col justify-center rounded-md  gap-2  text-center">
 
     <h2 className="text-3xl font-bold mb-6 text-center font-sans">
       {!forgotPass ? "Log In" : "Reset Password"}
