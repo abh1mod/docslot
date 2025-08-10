@@ -60,6 +60,22 @@ async function isLimitReached(email) {
   return false; 
 }
 
+async function isUploadLimitReached(apt_id) {
+  const key = `reportUploadCnt:${apt_id}`;
+  const frequency = await redisClient.get(key);
+  const count = frequency ? parseInt(frequency) : 0;
+  if (count >= 3) {
+    console.log("Upload Limit Reached");
+    return true;  
+  }
+  const newCount = await redisClient.incr(key);
+  if (newCount === 1) {
+    await redisClient.expire(key, 7 * 24 * 60 * 60); 
+  }
+  return false; 
+}
+
+
 cloudinary.config({ 
         cloud_name: 'dahtedx9c', 
         api_key: process.env.CLOUDINARY_KEY, 
@@ -333,11 +349,14 @@ router.post('/doctor/upload_image/:doc_id', auth, isDoctor, async (req, res) => 
 
 router.post('/patient/upload_report/:apt_id', auth, isPatient, async (req, res) => {
     try {
+        if (await isUploadLimitReached(req.params.apt_id)) {
+            return res.status(429).json({ success: false, message: "Upload limit reached. Please try again later." });
+        }
         const image = req.files.photo;
         const result = await cloudinary.uploader.upload(image.tempFilePath, {
             folder: "report_images"
         });
-
+        
         // Update appointment with report URL
         const report_photo = await sql`
             UPDATE appointment SET report = ${result.secure_url} WHERE apt_id = ${req.params.apt_id} RETURNING *
@@ -394,16 +413,13 @@ router.post('/patient/upload_report/:apt_id', auth, isPatient, async (req, res) 
         });
         }
 
-
-
-        res.status(200).json({ success: true, data: report_photo[0].report });
+        res.status(200).json({ success: true,message:`Report Uploaded successfully`, data: report_photo[0].report });
 
     } catch (error) {
         console.error("Image Upload Error:", error);
         res.status(500).json({ success: false, message: "Image Upload Failed" });
     }
 });
-
 
 //UPDATE
 
