@@ -136,7 +136,7 @@ useEffect(() => {
                 navigate("/pt_profile");
             }
             else {
-                 toast.error("Error while booking!",{
+                 toast.error(`${res.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,
@@ -148,7 +148,7 @@ useEffect(() => {
             }
         }
         catch(error){
-            toast.error("Error while action!",{
+            toast.error(`${error.response.data.message}`,{
                   autoClose: 2000,
                  hideProgressBar: false,
                  closeOnClick: true,

@@ -111,7 +111,6 @@ router.get("/my_profile", async (req, res) => {
       });
     }
 
-
   } catch (error) {
     return res.status(500).json({ success: false, message: "Invalid or expired token" });
   }
@@ -316,7 +315,7 @@ router.post('/doctor/reset_password', async (req, res) => {
     }   
 });
 
-router.post('/doctor/upload_image/:doc_id', async (req, res) => {
+router.post('/doctor/upload_image/:doc_id', auth, isDoctor, async (req, res) => {
     try {
         const image = req.files.photo;
         const result = await cloudinary.uploader.upload(image.tempFilePath, {
@@ -332,7 +331,7 @@ router.post('/doctor/upload_image/:doc_id', async (req, res) => {
     }
 });
 
-router.post('/patient/upload_report/:apt_id', async (req, res) => {
+router.post('/patient/upload_report/:apt_id', auth, isPatient, async (req, res) => {
     try {
         const image = req.files.photo;
         const result = await cloudinary.uploader.upload(image.tempFilePath, {
@@ -408,7 +407,7 @@ router.post('/patient/upload_report/:apt_id', async (req, res) => {
 
 //UPDATE
 
-router.put('/doctor/update/:doc_id', async (req, res) => {
+router.put('/doctor/update/:doc_id', auth, isDoctor, async (req, res) => {
     const { doc_id } = req.params;
     const { name, specialization, phone, email, address, city, about, slot } = req.body.formData;
 
@@ -698,7 +697,7 @@ router.get("/patient/fetch_slot/:doc_id", auth, isPatient, async(req, res)=>{
 });
 
 //READ route for doctor to check his profile 
-router.get('/doc_profile/:doc_id',  async(req,res)=>{
+router.get('/doc_profile/:doc_id', auth, async(req,res)=>{
     try{
         const {doc_id} = req.params;
         const doc = await sql`
@@ -711,11 +710,11 @@ router.get('/doc_profile/:doc_id',  async(req,res)=>{
         console.log("Error in fetching profile",error);
         res.status(500).json({success:false, message:"Server Error"});
     }
-})
+});
 
 
 //READ route for doctor to check his slot in a day
-router.get("/my_day/:doc_id", async(req,res)=>{
+router.get("/my_day/:doc_id", auth, isDoctor, async(req,res)=>{
     const{ doc_id } = req.params;
     try{ 
         const day_schedule = await sql `
@@ -965,12 +964,17 @@ router.post("/book_appointment/:doc_id/:pt_id", auth, isPatient, async (req, res
 
     } catch (error) {
         console.log("Error in booking appointment", error);
+        if (error.code === '23505' && error.constraint === 'unique_doc_date_time') {
+            return res.status(409).json({
+            message: 'This Slot is already booked. Please choose another Slot.'
+            });
+        }
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
 
 
-router.get("/busy_slots/:date/:doc_id", async(req,res)=>{
+router.get("/busy_slots/:date/:doc_id", auth, isPatient, async(req,res)=>{
     const {date, doc_id} = req.params;
     try{
         const busy_slots = await sql`
@@ -985,7 +989,7 @@ router.get("/busy_slots/:date/:doc_id", async(req,res)=>{
     }
 });
 
-router.get("/patient/slot_duration/:doc_id", async(req,res)=>{
+router.get("/patient/slot_duration/:doc_id",auth, isPatient, async(req,res)=>{
     const {doc_id} = req.params;
     try{
         const hour = await sql `SELECT slot FROM doctor WHERE doc_id = ${doc_id}`;
