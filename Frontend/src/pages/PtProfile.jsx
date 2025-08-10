@@ -158,7 +158,35 @@ function PtProfile() {
         </div>
 
         {/* Appointments */}
+        <div className="flex">
         <h1 className="text-2xl font-bold text-gray-800 mb-2 p-2">Scheduled Appointments</h1>
+          <div className="mt-3 cursor-pointer">
+          <div
+                    title="refresh"
+                    onClick={(e) => {
+                      e.stopPropagation();   
+                      fetchSlot();
+                    }}
+                    className="p-1 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {/* Simple reload icon using SVG */}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 4v5h.582M20 20v-5h-.581M5.11 9a7 7 0 0113.78 0M19.41 15a7 7 0 01-13.78 0"
+                      />
+                    </svg>
+                  </div></div>
+        </div>
         {slotSize === 0 && <p className="text-gray-600">No Appointments Scheduled</p>}
 
         <div className="flex flex-col gap-4">
