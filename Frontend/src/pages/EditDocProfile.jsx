@@ -158,6 +158,7 @@ const EditDocProfile = () => {
                     name={field.toLocaleLowerCase()}
                     value={formData[field.toLocaleLowerCase()] || ""}
                     maxLength={getMaxLength(field)}
+                    {...(field === "Phone" && { pattern: "[0-9]{10}" })}
                     onChange={handleChange}
                     disabled={field === "Email"}
                     required

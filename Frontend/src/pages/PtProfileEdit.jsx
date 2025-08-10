@@ -99,7 +99,7 @@ function PtProfileEdit({pt_profile, setIsEditing, fetchUser}) {
 
     {/* Form */}
     <div className="flex flex-col items-start justify-center gap-4 mt-4 w-full">
-      <form className="flex flex-col gap-2 w-full">
+      <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>
         {/* Name */}
         <label className="text-sm font-medium text-gray-700">Name</label>
         <input
@@ -129,6 +129,7 @@ function PtProfileEdit({pt_profile, setIsEditing, fetchUser}) {
               type="text"
               placeholder="Enter Your Gender"
               maxLength={6}
+              disabled = {pt_profile.gender}
               defaultValue={pt_profile.gender}
               className="w-full p-2 border border-gray-300 rounded-md"
               onChange={(e) => setGender(e.target.value)}
@@ -142,6 +143,7 @@ function PtProfileEdit({pt_profile, setIsEditing, fetchUser}) {
           type="text"
           placeholder="Contact Number"
           defaultValue={pt_profile.phone}
+          pattern="[0-9]{10}"
           maxLength={10}
           className="w-full p-2 border border-gray-300 rounded-md"
           onChange={(e) => setPhone(e.target.value)}
@@ -161,7 +163,7 @@ function PtProfileEdit({pt_profile, setIsEditing, fetchUser}) {
         {/* Submit */}
         <button
           className="w-full mt-4 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200"
-          onClick={handleSubmit}
+          type="submit"
         >
           Update Details
         </button>

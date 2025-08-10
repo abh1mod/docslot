@@ -162,7 +162,7 @@ function DoctorProfile() {
               <div className="mt-4 text-sm text-gray-600 space-y-2 text-center w-full">
                 <p>☎︎ {doctor?.phone || user?.phone}</p>
                 <p className="break-words">📧 {doctor?.email || user?.email}</p>
-                <p>{doctor?.city || "—"}</p>
+                <p><img className="inline-block w-4 h-5 mr-0.75" src="https://res.cloudinary.com/dahtedx9c/image/upload/v1754721724/doctor_images/pa2zuyhh3rbplop33j71.png" />{doctor?.city || "—"}</p>
               </div>
 
               <div className="mt-6 w-full flex flex-col items-center gap-3">
@@ -252,18 +252,22 @@ function DoctorProfile() {
                         <div key={item.apt_id} className="bg-white rounded-lg p-4 shadow-sm flex items-start justify-between gap-4">
                           {/* Left column: name, date/time/type, report */}
                           <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:gap-3 sm:flex-row">
                             <p className="font-medium text-gray-900 truncate">{item.name || "N/A"}</p>
+                            {item.phone && <p className="text-sm sm:mt-0.5 text-gray-500">☎︎ {item.phone || "N/A"}</p>}
+                          </div>
 
+                            
                             <div className="mt-1 text-sm text-gray-600 flex flex-col sm:flex-row sm:items-center sm:gap-3">
                               <span>{formatDate(item.date)}</span>
-                              <span>•</span>
+                              <span className="hidden sm:inline">•</span>
                               <span>{item.start_time && manageTime(item.start_time)}</span>
                               <span className="hidden sm:inline">•</span>
                               <span className="text-gray-500">{item.category || "Consultation"}</span>
                             </div>
 
                             {item.report && (
-                              <div className="mt-2">
+                              <div className="mt-2 hidden sm:block">
                                 <a href={item.report} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline">
                                   View Report
                                 </a>
@@ -273,6 +277,13 @@ function DoctorProfile() {
 
                           {/* Right column: status + actions */}
                           <div className="flex flex-col items-end gap-3">
+                          {item.report && (
+                            <div className="sm:hidden mr-2">
+                              <a href={item.report} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline">
+                                View Report
+                              </a>
+                            </div>
+                          )}
                             <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusClass}`}>
                               {item.status}
                             </span>
@@ -311,22 +322,25 @@ function DoctorProfile() {
                   {pastOpen ? <FaArrowCircleUp /> : <FaArrowAltCircleDown />}
                 </button>
 
-                <div className={`mt-3 transition-all ${pastOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>
+                <div className={`mt-3 transition-all ${pastOpen ? "max-h-[fit-content] opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>
                   <div className="flex flex-col gap-3">
                     {pastAppointments.length === 0 && <div className="text-gray-600 p-3">No past appointments.</div>}
                     {pastAppointments.map((item) => (
                       <div key={item.apt_id} className="bg-white rounded-lg p-4 shadow-sm flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{item.name || "N/A"}</p>
+                          <div className="flex flex-col sm:gap-3 sm:flex-row">
+                            <p className="font-medium text-gray-900 truncate">{item.name || "N/A"}</p>
+                            {item.phone && <p className="text-sm sm:mt-0.5 text-gray-500">☎︎ {item.phone || "N/A"}</p>}
+                          </div>
                           <div className="mt-1 text-sm text-gray-600 flex flex-col sm:flex-row sm:items-center sm:gap-3">
                             <span>{formatDate(item.date)}</span>
-                            <span>•</span>
+                            <span className="hidden sm:inline">•</span>
                             <span>{item.start_time && formatTime(item.start_time)}</span>
                             <span className="hidden sm:inline">•</span>
                             <span className="text-gray-500">{item.type || item.appointment_type || "Consultation"}</span>
                           </div>
                           {item.report && (
-                            <div className="mt-2">
+                            <div className="mt-2 sm:block hidden">
                               <a href={item.report} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline">
                                 View Report
                               </a>
@@ -335,6 +349,13 @@ function DoctorProfile() {
                         </div>
 
                         <div className="flex flex-col items-end gap-3">
+                        {item.report && (
+                            <div className="mt-2 sm:hidden mr-2">
+                              <a href={item.report} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline">
+                                View Report
+                              </a>
+                            </div>
+                          )}
                           <span className="px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 text-gray-700">
                             {item.status || "—"}
                           </span>
