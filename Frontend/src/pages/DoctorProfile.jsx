@@ -65,7 +65,7 @@ function DoctorProfile() {
 
   useEffect(() => {
     loadAppointments();
-  }, [user?.doc_id]);
+  }, [isLogin, doctor]);
 
   // Load doctor profile
   const loadDoctor = async () => {
