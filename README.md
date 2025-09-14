@@ -6,6 +6,9 @@
 
 DocSlot is a healthcare appointment booking platform developed as a learning project to understand modern web development technologies and healthcare system workflows. It demonstrates how to build a dual-user system with separate interfaces for patients and doctors, showcasing full-stack development skills.
 
+
+**Video Tutorial**: https://youtu.be/5D9CQ6N2SpA?feature=shared
+
 ## Core Functionality
 
 - **Dual User System**: Separate interfaces for patients and doctors
