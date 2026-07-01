@@ -32,6 +32,7 @@ function App() {
     if (role) {
       setProfileSelected(true);
       setUserRole(role); // save role for later routing
+      // test comment
     }
   }, []);
 
